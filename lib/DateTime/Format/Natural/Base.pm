@@ -5,6 +5,8 @@ no strict 'refs';
 use warnings;
 no warnings 'uninitialized';
 
+our $VERSION = '0.2';
+
 use DateTime;
 use Date::Calc qw(Add_Delta_Days Days_in_Month
                   Decode_Day_of_Week
@@ -17,6 +19,7 @@ sub _init {
     my $lang = shift;
     my $mod = 'DateTime::Format::Natural::Lang::'.uc($lang);
     eval "use $mod";
+    die $@ if $@;
 }
 
 sub _ago {

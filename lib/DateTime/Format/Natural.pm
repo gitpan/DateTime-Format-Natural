@@ -7,7 +7,7 @@ no warnings 'uninitialized';
 
 use base qw(DateTime::Format::Natural::Base);
 
-our $VERSION = '0.14';
+our $VERSION = '0.15';
 
 our (%main, %data_weekdays, %data_months);
 
@@ -34,8 +34,7 @@ sub parse_datetime {
         $self->{datetime} = DateTime->now(time_zone => 'local');
     }
 
-    my $lang = uc($self->{lang});
-    my $mod = "DateTime::Format::Natural::Lang::$lang";
+    my $mod = 'DateTime::Format::Natural::Lang::'.uc($self->{lang});
     eval "use $mod"; 
     die $@ if $@;
 

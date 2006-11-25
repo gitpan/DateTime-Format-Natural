@@ -5,6 +5,8 @@ use warnings;
 
 use base qw(Exporter);
 
+our $VERSION = '0.1';
+
 our (@EXPORT, %data_weekdays, %data_months, %main, %second, %ago,
      %now, %daytime, %months, %number, %at, %this_in, %next, %last,
      %day, %setyearday);
