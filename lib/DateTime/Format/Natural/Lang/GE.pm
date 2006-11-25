@@ -5,7 +5,7 @@ use warnings;
 
 use base qw(Exporter);
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 our (@EXPORT, %data_weekdays, %data_months, %main, %second, %ago,
      %now, %daytime, %months, %number, %at, %this_in, %next, %last,
@@ -59,6 +59,7 @@ our (@EXPORT, %data_weekdays, %data_months, %main, %second, %ago,
 %daytime = ('tokens'     => [ qr/\d/, qr/^am$/i ],
             'morning'    => qr/^morgen$/i,
             'afternoon'  => qr/^nachmittag$/i,
+            'ago'        => qr/^her$/i,
            );
 
 %months = ('number' => qr/^(\d{1,2})$/i);
@@ -92,10 +93,13 @@ our (@EXPORT, %data_weekdays, %data_months, %main, %second, %ago,
          'number' => qr/^(\d{1,2})$/,
          );
 
-%day = ('init'         => qr/^(?:heute|gestern|morgen)$/i,
-        'yesterday'    => qr/gestern/i,
-        'tomorrow'     => qr/morgen/i,
-        'noonmidnight' => qr/^mittag|mitternacht$/i,
+%day = ('init'           => qr/^(?:heute|gestern|morgen)$/i,
+        'morning_prefix' => qr/^(?:diese|nächste|letze)(?:r|s|n)$/i,
+        'yesterday'      => qr/gestern/i,
+        'tomorrow'       => qr/morgen/i,
+        'noonmidnight'   => qr/^mittag|mitternacht$/i,
+        'at'             => qr/^am$/i,
+        'when'           => qr/^diesen|heute|gestern$/i,
         );
 
 %setyearday = ('day' => qr/^tag$/i,
@@ -167,7 +171,7 @@ Below are some examples of human readable date/time input in german:
 
 =head1 SEE ALSO
 
-L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org/>
+L<DateTime::Format::Natural>, L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org/>
 
 =head1 AUTHOR
 

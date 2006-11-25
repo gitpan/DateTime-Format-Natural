@@ -5,7 +5,7 @@ no strict 'refs';
 use warnings;
 no warnings 'uninitialized';
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 use DateTime;
 use Date::Calc qw(Add_Delta_Days Days_in_Month
@@ -104,7 +104,9 @@ sub _daytime {
         # morning & tomorrow shares the same spelling in german
         if ($self->{lang} eq 'ge') {
             for my $i qw(0 1 2 3) {
-                if ($self->{tokens}->[$self->{index}+$i] =~ $self->{ago}) {
+                if ($self->{tokens}->[$self->{index}+$i] =~ $self->{main}{ago}
+                    || $self->{tokens}[$self->{index}-1] =~ $daytime{ago}
+                    || $self->{tokens}[$self->{index}+3] =~ $daytime{ago}) {
                     return;
                 }
             }
@@ -226,7 +228,8 @@ sub _weekday {
 
     foreach my $key_weekday (keys %{$self->{weekdays}}) {
         my $weekday_short = lc(substr($key_weekday,0,3));
-        if ($self->{tokens}->[$self->{index}] =~ /$key_weekday/i || $self->{tokens}->[$self->{index}] eq $weekday_short) {
+        if ($self->{tokens}->[$self->{index}] =~ /$key_weekday/i
+            || $self->{tokens}->[$self->{index}] =~ /^$weekday_short$/i) {
             $key_weekday = ucfirst(lc($key_weekday));
             my $days_diff;
             if ($self->{weekdays}->{$key_weekday} > $self->{datetime}->wday) {
@@ -253,7 +256,8 @@ sub _this_in {
 
     foreach my $key_weekday (keys %{$self->{weekdays}}) {
         my $weekday_short = lc(substr($key_weekday,0,3));
-        if ($self->{tokens}->[$self->{index}] =~ /$key_weekday/i || $self->{tokens}->[$self->{index}] eq $weekday_short) {
+        if ($self->{tokens}->[$self->{index}] =~ /$key_weekday/i 
+            || $self->{tokens}->[$self->{index}] eq $weekday_short) {
             my $days_diff = $self->{weekdays}->{$key_weekday} - $self->{datetime}->wday;
             $self->{datetime}->add(days => $days_diff);
             $self->{buffer} = '';
@@ -298,7 +302,8 @@ sub _next {
     foreach my $key_weekday (keys %{$self->{weekdays}}) {
         my $weekday_short = lc(substr($key_weekday,0,3));
 
-        if ($self->{tokens}->[$self->{index}] =~ /$key_weekday/i || $self->{tokens}->[$self->{index}] eq $weekday_short) {
+        if ($self->{tokens}->[$self->{index}] =~ /$key_weekday/i 
+            || $self->{tokens}->[$self->{index}] eq $weekday_short) {
             my $days_diff = (7 - $self->{datetime}->wday) + Decode_Day_of_Week($key_weekday);
             $self->{datetime}->add(days => $days_diff);
             $self->{buffer} = '';
@@ -349,7 +354,8 @@ sub _last {
     foreach my $key_weekday (keys %{$self->{weekdays}}) {
         my $weekday_short = lc(substr($key_weekday,0,3));
 
-        if ($self->{tokens}->[$self->{index}] =~ /$key_weekday/i || $self->{tokens}->[$self->{index}] eq $weekday_short) {
+        if ($self->{tokens}->[$self->{index}] =~ /$key_weekday/i 
+            || $self->{tokens}->[$self->{index}] eq $weekday_short) {
             my $days_diff = $self->{datetime}->wday + (7 - $self->{weekdays}->{$key_weekday});
             $self->{datetime}->subtract(days => $days_diff);
             $self->{buffer} = '';
@@ -418,8 +424,24 @@ sub _day {
         if ($self->{tokens}->[$self->{index}] =~ $day{yesterday}) {
             $self->{datetime}->subtract(days => 1);
         }
+        my ($skip1, $skip2) = (0,0);
         if ($self->{tokens}->[$self->{index}] =~ $day{tomorrow}) {
-            $self->{datetime}->add(days => 1);
+            if ($self->{lang} eq 'ge') {
+                if ($self->{tokens}->[$self->{index}] =~ $day{morning_prefix}
+                        || $self->{tokens}[$self->{index}-1] =~ $day{at}
+                        || $self->{tokens}[$self->{index}-1] =~ $day{when}
+                        || scalar @{$self->{tokens}} == 1) {
+                            $skip1 = 1;
+                }
+                for my $weekday (keys %{$self->{weekdays}}) {
+                    if ($self->{tokens}->[$self->{index}-1] =~ /$weekday/i) {
+                        $skip2 = 1;
+                    }
+                }
+                $self->{datetime}->add(days => 1) unless ($skip1 || $skip2);
+            } else {
+                $self->{datetime}->add(days => 1);
+            }
         }
 
         $self->_set_modified;
@@ -498,7 +520,7 @@ DateTime::Format::Natural.
 
 =head1 SEE ALSO
 
-L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org/>
+L<DateTime::Format::Natural>, L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org/>
 
 =head1 AUTHOR
 

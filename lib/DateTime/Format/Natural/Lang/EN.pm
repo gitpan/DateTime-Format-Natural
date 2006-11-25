@@ -173,7 +173,7 @@ Below are some examples of human readable date/time input in english:
 
 =head1 SEE ALSO
 
-L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org/>
+L<DateTime::Format::Natural>, L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org/>
 
 =head1 AUTHOR
 

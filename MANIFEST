@@ -13,7 +13,8 @@ README
 scripts/parse-en.pl
 scripts/parse-ge.pl
 t/00-load.t
-t/parse.t
+t/01-parse_en.t
+t/02-parse_ge.t
 t/pod-coverage.t
 t/pod.t
 TODO

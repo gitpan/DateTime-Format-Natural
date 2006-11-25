@@ -4,7 +4,7 @@ use strict;
 use warnings;
 no strict 'refs';
 
-use DateTime::Format::Natural::EN;
+use DateTime::Format::Natural;
 use Test::More tests => 39;
 
 my ($min, $hour, $day, $month, $year) = qw(13 01 24 11 2006);
@@ -57,15 +57,15 @@ compare(\%specific);
 
 sub compare {
     my $hashref = shift;
-    while (my ($string, $result) = each %$hashref) {
-        compare_strings($string, $result);
+    foreach my $key (sort keys %$hashref) {
+        compare_strings($key, $hashref->{$key});
     }
 }
 
 sub compare_strings {
     my ($string, $result) = @_;
 
-    my $parse = DateTime::Format::Natural::EN->new();
+    my $parse = DateTime::Format::Natural->new();
     $parse->_set_datetime($year, $month, $day, $hour, $min);
     my $dt = $parse->parse_datetime(string => $string, lang => 'en');
     my $res_string = sprintf("%02s.%02s.%4s %02s:%02s", $dt->day, $dt->month, $dt->year, $dt->hour, $dt->min);

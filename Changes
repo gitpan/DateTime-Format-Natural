@@ -1,5 +1,14 @@
 Revision history for Perl extension DateTime::Format::Natural::EN.
 
+0.16 Sat Nov 25 18:09:48 CET 2006
+
+ - Added missing '1;' to the documentation of Authoring.pod.
+
+ - Changed strings in Authoring.pod to be italic.
+
+ - The testsuite now contains a german aquivalent of the english
+   parsing test.
+
 0.15 Sam Nov 25 16:49:22 CET 2006
 
  - Added DateTime::Format::Natural::Lang::Authoring documentation.

@@ -7,7 +7,7 @@ no warnings 'uninitialized';
 
 use base qw(DateTime::Format::Natural::Base);
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 
 our (%main, %data_weekdays, %data_months);
 
@@ -66,6 +66,7 @@ sub parse_datetime {
 
     %{$self->{weekdays}} = %data_weekdays;
     %{$self->{months}}   = %data_months;
+    %{$self->{main}}     = %main;
 
     for ($self->{index} = 0; $self->{index} < @{$self->{tokens}}; $self->{index}++) {
 
