@@ -1,0 +1,85 @@
+Revision history for Perl extension DateTime::Format::Natural::EN.
+
+0.13 Sat Nov 25 04:14:54 CET 2006
+
+ - Separated data from logic by keeping all regular expressions in
+   separate packages.
+
+ - Language support for german has been included.
+
+0.12 Fri Nov 24 20:36:37 CET 2006
+
+ - Added some basic tests to the testsuite which exercice
+   converting natural format strings to an according datetime object.
+
+ - Enhanced the collection of valid strings that are translated.
+
+0.11 Fri Nov 24 02:15:30 CET 2006
+
+ - Refactored the code where duplicated chunks were available.
+
+ - Evaluated whether the current listed expressions pass the parsing.
+
+0.10 Thu Nov 23 01:14:44 CET 2006
+
+ - Substituted additions/subtractions where possible with the
+   appropriate DateTime method calls.
+
+ - An Exception is thrown if no valid input has been given.
+   [Tatsuhiko Miyagawa <miyagawa@gmail.com>]
+
+0.09 Sun Nov 19 14:38:24 CET 2006
+
+ - Date strings with slashes are now being split and assigned
+   to the appropriate variables.
+
+ - Moved the initialization of object data into a sub.
+   Same procedure for the code chunk returning a datetime object.
+
+0.08 Sun Nov 19 12:30:24 CET 2006
+
+ - Code is now object-oriented.
+
+0.07 Sat Oct 28 17:16:53 CEST 2006
+
+ - Replaced all tabs in EN.pm with regular spaces (4).
+
+0.06 Wed Oct 25 20:24:38 CEST 2006
+
+ - Substituted exporting functions with an object-oriented constructor.
+   parse_datetime() is now called as a method.
+   [Dave Rolsky <urth@autarch.org>]
+
+ - parse_datetime() takes either a datestring or an options hash.
+   [Dave Rolsky <urth@autarch.org>]
+
+0.05 Wed Oct 25 11:27:26 CEST 2006
+
+ - Moved from namespace DateTime::Natural::Parse to DateTime::From::Natural::EN
+   [Dave Rolsky <urth@autarch.org>]
+
+ - Renamed natural_parse() to parse_datestring().
+
+0.04 Wed Oct 25 00:17:01 CEST 2006
+
+ - Updated the code to process some "complex" input.
+
+ - Actualized the documentation accordingly.
+
+0.03 Tue Oct 24 01:25:03 CEST 2006
+ 
+ - Appended the i(ncasesensitive) Modifier to a few regular expressions.
+
+ - Fixed the broken newlines for the example documentation.
+
+0.02 Mon Oct 23 23:22:41 CEST 2006
+
+ - DateTime has been added to the dependencies list.
+ 
+ - natural_parse() returns a DateTime object [Clayton L. Scott <clscott@cpan.org>]
+ 
+ - Extended documentation to include some example human readable time strings.
+
+0.01 Sun Oct 22 22:15:54 CEST 2006
+
+ - Initial version.
