@@ -7,7 +7,7 @@ no warnings 'uninitialized';
 
 use base qw(DateTime::Format::Natural::Base);
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 our (%main, %data_weekdays, %data_months);
 
@@ -231,19 +231,19 @@ __END__
 
 =head1 NAME
 
-DateTime::Format::Natural::EN - Create machine readable date/time with natural parsing logic
+DateTime::Format::Natural - Create machine readable date/time with natural parsing logic
 
 =head1 SYNOPSIS
 
- use DateTime::Format::Natural::EN;
+ use DateTime::Format::Natural;
 
- $parse = DateTime::Format::Natural::EN->new();
+ $parse = DateTime::Format::Natural->new();
 
  $dt = $parse->parse_datetime($date_string);
 
 =head1 DESCRIPTION
 
-C<DateTime::Format::Natural::EN> consists of a method, C<parse_datetime()>, which takes a 
+C<DateTime::Format::Natural> consists of a method, C<parse_datetime()>, which takes a 
 string with a human readable date/time and creates a machine readable one by applying 
 natural parsing logic.
 
@@ -251,7 +251,7 @@ natural parsing logic.
 
 =head2 new
 
-Creates a new DateTime::Format::Natural::EN object.
+Creates a new DateTime::Format::Natural object.
 
 =head2 parse_datetime
 

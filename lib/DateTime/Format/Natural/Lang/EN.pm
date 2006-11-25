@@ -104,6 +104,16 @@ our (@EXPORT, %data_weekdays, %data_months, %main, %ago, %now,
 1;
 __END__
 
+=head1 NAME
+
+DateTime::Format::Natural::Lang::EN - English specific regular expressions and variables
+
+=head1 DESCRIPTION
+
+C<DateTime::Format::Natural::Lang::EN> provides the english specific regular expressions
+and variables. This class is loaded if the user either specifies the english language or
+implicitly.
+
 =head1 EXAMPLES
 
 Below are some examples of human readable date/time input in english:

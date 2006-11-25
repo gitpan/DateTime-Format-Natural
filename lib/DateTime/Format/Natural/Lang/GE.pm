@@ -102,6 +102,15 @@ our (@EXPORT, %data_weekdays, %data_months, %main, %second, %ago,
 1;
 __END__
 
+=head1 NAME
+
+DateTime::Format::Natural::Lang::GE - German specific regular expressions and variables
+
+=head1 DESCRIPTION
+
+C<DateTime::Format::Natural::Lang::GE> provides the german specific regular expressions
+and variables. This class is loaded if the user specifies the german language.
+
 =head1 EXAMPLES
 
 Below are some examples of human readable date/time input in german:

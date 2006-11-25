@@ -478,3 +478,34 @@ sub _setweekday {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+DateTime::Format::Natural::Base - Default methods for DateTime::Format::Natural
+
+=head1 SYNOPSIS
+
+ Please see the DateTime::Format::Natural documentation.
+
+=head1 DESCRIPTION
+
+The DateTime::Format::Natural::Base module defines the core functionality of
+DateTime::Format::Natural.
+
+=head1 SEE ALSO
+
+L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org/>
+
+=head1 AUTHOR
+
+Steven Schubiger <schubiger@cpan.org>
+
+=head1 LICENSE
+
+This program is free software; you may redistribute it and/or
+modify it under the same terms as Perl itself.
+
+See L<http://www.perl.com/perl/misc/Artistic.html>
+
+=cut

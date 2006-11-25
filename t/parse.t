@@ -33,7 +33,7 @@ my %complex = ('3 years ago'                     => '24.11.2003 01:13',
                '5 months before now'             => '24.06.2006 01:13',
                '7 hours ago'                     => '23.11.2006 18:13',
                'in 3 hours'                      => '24.11.2006 04:13',
-               '1 year ago tomorrow'             => '25.11.2005 01:13',
+               '1 year ago tomorrow'             => '24.11.2005 01:13',
                '3 months ago saturday at 5:00pm' => '26.08.2006 17:00',
                '4th day last week'               => '16.11.2006 01:13',
                '3rd wednesday in november'       => '15.11.2006 01:13',
@@ -67,7 +67,7 @@ sub compare_strings {
 
     my $parse = DateTime::Format::Natural::EN->new();
     $parse->_set_datetime($year, $month, $day, $hour, $min);
-    my $dt = $parse->parse_datetime(string => $string);
+    my $dt = $parse->parse_datetime(string => $string, lang => 'en');
     my $res_string = sprintf("%02s.%02s.%4s %02s:%02s", $dt->day, $dt->month, $dt->year, $dt->hour, $dt->min);
     is($res_string, $result, $string);
 }
