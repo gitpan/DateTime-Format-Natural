@@ -7,13 +7,19 @@ no warnings 'uninitialized';
 
 use base qw(DateTime::Format::Natural::Base);
 
-our $VERSION = '0.16';
-
-our (%main, %data_weekdays, %data_months);
+our $VERSION = '0.17';
 
 sub new {
-    my $class = shift;
-    return bless {}, $class || ref($class);
+    my ($class, %opts) = @_;
+
+    my $lang = $opts{lang} || 'en';
+    my $mod  = 'DateTime::Format::Natural::Lang::'.uc($lang);
+    eval "use $mod"; die $@ if $@;
+    my $obj = {};
+    $obj->{data} = $mod->new();
+    $obj->{lang} = $lang;
+
+    return bless $obj, $class || ref($class);
 }
 
 sub parse_datetime {
@@ -22,10 +28,10 @@ sub parse_datetime {
     my ($DEBUG, $date_string, %opts);
 
     if (@_ > 1) {
-        %opts         = @_;
-        $date_string  = $opts{string};
-        $DEBUG        = $opts{debug};
-        $self->{lang} = $opts{lang} || 'en';
+        %opts           = @_;
+        $date_string    = $opts{string};
+        $DEBUG          = $opts{debug};
+        $self->{lang} ||= $opts{lang};
     } else {
         ($date_string) = @_;
     }
@@ -33,10 +39,6 @@ sub parse_datetime {
     unless ($self->{nodatetimeset}) {
         $self->{datetime} = DateTime->now(time_zone => 'local');
     }
-
-    my $mod = 'DateTime::Format::Natural::Lang::'.uc($self->{lang});
-    eval "use $mod"; 
-    die $@ if $@;
 
     $date_string =~ tr/,//d;
 
@@ -62,31 +64,25 @@ sub parse_datetime {
         $dont_proceed2,
         $dont_proceed3) = (0,0,0);
 
-    DateTime::Format::Natural::Base::_init($self->{lang});
-
-    %{$self->{weekdays}} = %data_weekdays;
-    %{$self->{months}}   = %data_months;
-    %{$self->{main}}     = %main;
-
     for ($self->{index} = 0; $self->{index} < @{$self->{tokens}}; $self->{index}++) {
 
         print "$self->{tokens}->[$self->{index}]\n" if $DEBUG;
 
         $self->_day;
 
-        if ($self->{tokens}->[$self->{index}] =~ $main{second}) {
+        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->main('second')) {
             $self->{modified} = 1;
         }
 
-        if ($self->{tokens}->[$self->{index}+2] =~ $main{ago}) {
+        if ($self->{tokens}->[$self->{index}+2] =~ $self->{data}->main('ago')) {
             $self->_ago;
         }
 
-        if ($self->{tokens}->[$self->{index}+3] =~ $main{now}) {
+        if ($self->{tokens}->[$self->{index}+3] =~ $self->{data}->main('now')) {
             $self->_now;
         }
 
-        if ($self->{tokens}->[$self->{index}] =~ $main{daytime}) {
+        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->main('daytime')) {
             $self->_daytime;
         }
 
@@ -94,7 +90,7 @@ sub parse_datetime {
             $self->{datetime}->set_year($1);
         }
 
-        OUTER1: foreach my $match (@{$main{months}}) {
+        OUTER1: foreach my $match (@{$self->{data}->main('months')}) {
             foreach my $i qw(-1 0 1 2) {
                 if ($self->{tokens}->[$self->{index}+$i] =~ /$match/i) {
                     $dont_proceed1 = 1;
@@ -107,8 +103,8 @@ sub parse_datetime {
 
        if ($self->{tokens}->[$self->{index}] =~ /^at$/i) {
            next;
-       } elsif ($self->{tokens}->[$self->{index}] =~ $main{at_intro}) {
-        OUTER2: foreach my $match (@{$main{at_matches}}) {
+       } elsif ($self->{tokens}->[$self->{index}] =~ $self->{data}->main('at_intro')) {
+        OUTER2: foreach my $match (@{$self->{data}->main('at_matches')}) {
                 foreach my $i qw(-1 0 1 2) {
                     if ($self->{tokens}->[$self->{index}+$i] =~ /^$match$/i) {
                         $dont_proceed2 = 1;
@@ -125,8 +121,8 @@ sub parse_datetime {
             }
         }
 
-        if ($self->{tokens}->[$self->{index}] =~ $main{number_intro}) {
-            OUTER3: foreach my $match (@{$main{number_matches}}) {
+        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->main('number_intro')) {
+            OUTER3: foreach my $match (@{$self->{data}->main('number_matches')}) {
                 foreach my $i qw(-1 0 1 2) {
                     if ($self->{tokens}->[$self->{index}+$i] =~ /$match/i) {
                        $dont_proceed3 = 1;
@@ -147,28 +143,28 @@ sub parse_datetime {
             $self->{datetime}->set_year($self->{tokens}->[$self->{index}]);
         }
 
-        if ($self->{tokens}->[$self->{index}]      !~ $main{weekdays}
-            && $self->{tokens}->[$self->{index}-1] !~ $main{weekdays}
-            && $self->{tokens}->[$self->{index}-2] !~ $main{weekdays}
-            && $self->{tokens}->[$self->{index}+1] !~ $main{weekdays}) {
+        if ($self->{tokens}->[$self->{index}]      !~ $self->{data}->main('weekdays')
+            && $self->{tokens}->[$self->{index}-1] !~ $self->{data}->main('weekdays')
+            && $self->{tokens}->[$self->{index}-2] !~ $self->{data}->main('weekdays')
+            && $self->{tokens}->[$self->{index}+1] !~ $self->{data}->main('weekdays')) {
             $self->_weekday;
         }
 
-        if ($self->{tokens}->[$self->{index}] =~ $main{this_in}) {
+        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->main('this_in')) {
             $self->{buffer} = 'this_in';
             next;
         } elsif ($self->{buffer} eq 'this_in') {
             $self->_this_in;
         }
 
-        if ($self->{tokens}->[$self->{index}] =~ $main{next}) {
+        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->main('next')) {
             $self->{buffer} = 'next';
             next;
         } elsif ($self->{buffer} eq 'next') {
             $self->_next;
         }
 
-        if ($self->{tokens}->[$self->{index}] =~ $main{last}) {
+        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->main('last')) {
             $self->{buffer} = 'last';
             next;
         } elsif ($self->{buffer} eq 'last') {
@@ -212,6 +208,7 @@ sub _return_dt_object {
     return $dt;
 }
 
+# for debugging purpose only
 sub _set_datetime {
     my ($self, $year, $month, $day, $hour, $min) = @_;
 
@@ -253,21 +250,25 @@ natural parsing logic.
 
 Creates a new DateTime::Format::Natural object.
 
+ $parse = DateTime::Format::Natural->new(lang => '[en|de]');
+
+C<lang> contains the language selected, currently limited to
+C<en> (english) & C<de> (german).
+
 =head2 parse_datetime
 
 Creates a C<DateTime> object from a human readable date/time string.
 
  $dt = $parse->parse_datetime($date_string);
 
- $dt = $parse->parse_datetime(string => $date_string, lang => 'en', debug => 1);
+ $dt = $parse->parse_datetime(string => $date_string, debug => 1);
 
-The options may contain the keys C<string>, C<lang> & C<debug>.
+The options may contain the keys C<string>, & C<debug>.
 C<string> may consist of the datestring, whereas C<debug> holds the boolean value for the
 debugging option. If debugging is enabled, each token that is analysed will be output to 
-stdout with a trailing newline. Finally, C<lang> contains the language selected, currently
-limited to C<en> (english) & C<ge> (german).
+stdout with a trailing newline.
 
-The C<string> & C<lang> options are necessary.
+The C<string> parameter is required.
 
 Returns a C<DateTime> object.
 

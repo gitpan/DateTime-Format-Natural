@@ -18,16 +18,19 @@ The header should look as following:
  use strict;
  use warnings;
 
- use base qw(Exporter);
+ our $VERSION = '0.2';
 
- our $VERSION = '0.1';
+ our (%data_weekdays, %data_months);
 
- our (@EXPORT, %data_weekdays, %data_months, %main, %ago, %now, 
-     %daytime, %months, %at, %number, %this_in, %next, %last, %day, 
-     %setyearday);
+ sub new {
+     my $class = shift;
 
- @EXPORT = qw(%data_weekdays %data_months %main %ago %now %daytime 
-             %months %number %at %this_in %next %last %day %setyearday);
+     my $obj = {};
+     $obj->{weekdays} = \%data_weekdays;
+     $obj->{months}   = \%data_months;
+
+     return bless $obj, $class || ref($class);
+ }
 
 Substitute C<EN> with the appropriate language code. Use C<$VERSION = '0.1'>
 if it's a initial release, otherwise replace it with your custom version number.
