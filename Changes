@@ -1,5 +1,13 @@
 Revision history for Perl extension DateTime::Format::Natural::EN.
 
+0.19 Mon Nov 27 20:06:17 CET 2006
+
+ - Added to DE.pm & EN.pm an AUTOLOAD handler for both of them.
+   The subroutine called prefixed with two underscores will be 
+   translated to an according variable name without underscores.
+   The parameter to the subroutine will function as variable
+   lookup key.
+
 0.18 Sun Nov 26 17:35:17 CET 2006
 
  - Fixed all occurences of the global weekday hash by adding the

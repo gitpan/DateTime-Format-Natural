@@ -4,9 +4,9 @@ use strict;
 no strict 'refs';
 use warnings;
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
-our (%data_weekdays, %data_months);
+our ($AUTOLOAD, %data_weekdays, %data_months);
 
 sub __new {
     my $class = shift;
@@ -16,6 +16,18 @@ sub __new {
     $obj->{months}   = \%data_months;
 
     return bless $obj, $class || ref($class);
+}
+
+AUTOLOAD {
+    my ($self, $exp) = @_;
+
+    my $sub = $AUTOLOAD;
+    $sub =~ s/.*::(.*)/$1/;
+
+    if (substr($sub, 0, 2) eq '__') {
+       $sub =~ s/^__(.*)$/$1/;
+       return ${$sub}{$exp};
+    }
 }
 
 {
@@ -30,149 +42,83 @@ sub __new {
                                          Oktober November Dezember);
 }
 
-sub __main {
-    my ($self, $string) = @_;
+our %main = ('second'         => qr/^sekunde$/i,
+             'ago'            => qr/^her$/i,
+             'now'            => qr/^jetzt$/i,
+             'daytime'        => [qr/^(?:nachmittag|abend)$/i, qr/^Morgen$/],
+             'months'         => [qw(in diesem)],
+             'at_intro'       => qr/^(\d{1,2})(\:\d{2})?(am|pm)?|(mittag|mitternacht)$/i,
+             'at_matches'     => [qw(tag in monat)],
+             'number_intro'   => qr/^(\d{1,2})$/i,
+             'number_matches' => [qw(tag tage woche wochen monat monate Morgen abend jahr in)],
+             'weekdays'       => qr/^(?:diesen|nächsten|letzten)$/i,
+             'this_in'        => qr/^(?:diese(?:r|s|n)|in)$/i,
+             'next'           => qr/^nächste(?:r|s|n)$/i,
+             'last'           => qr/^letzte(?:r|s|n)?$/i,
+             );
 
-    my %main = ('second'         => qr/^sekunde$/i,
-                'ago'            => qr/^her$/i,
-                'now'            => qr/^jetzt$/i,
-                'daytime'        => [qr/^(?:nachmittag|abend)$/i, qr/^Morgen$/],
-                'months'         => [qw(in diesem)],
-                'at_intro'       => qr/^(\d{1,2})(\:\d{2})?(am|pm)?|(mittag|mitternacht)$/i,
-                'at_matches'     => [qw(tag in monat)],
-                'number_intro'   => qr/^(\d{1,2})$/i,
-                'number_matches' => [qw(tag tage woche wochen monat monate Morgen abend jahr in)],
-                'weekdays'       => qr/^(?:diesen|nächsten|letzten)$/i,
-                'this_in'        => qr/^(?:diese(?:r|s|n)|in)$/i,
-                'next'           => qr/^nächste(?:r|s|n)$/i,
-                'last'           => qr/^letzte(?:r|s|n)?$/i,
+our %ago = ('hour'  => qr/^stunde(?:n)?$/i,
+            'day'   => qr/^tag(?:e)?$/i,
+            'week'  => qr/^woche(?:n)?$/i,
+            'month' => qr/^monat(?:e)?$/i,
+            'year'  => qr/^jahr(?:e)?$/i,
+            );
+
+our %now = ('day'    => qr/^tag(?:e)?$/i,
+            'week'   => qr/^woche(?:n)?$/i,
+            'month'  => qr/^monat(?:e)?$/i,
+            'year'   => qr/^jahr(?:e)?$/i,
+            'before' => qr/^vor$/i,
+            'from'   => qr/^nach$/i,
+            );
+
+our %daytime = ('tokens'     => [ qr/\d/, qr/^am$/i ],
+                'morning'    => qr/^Morgen$/,
+                'afternoon'  => qr/^nachmittag$/i,
+                'ago'        => qr/^her$/i,
                 );
 
-    return $main{$string};
-}
-
-sub __ago {
-    my ($self, $string) = @_;
-
-    my %ago = ('hour'  => qr/^stunde(?:n)?$/i,
-               'day'   => qr/^tag(?:e)?$/i,
-               'week'  => qr/^woche(?:n)?$/i,
-               'month' => qr/^monat(?:e)?$/i,
-               'year'  => qr/^jahr(?:e)?$/i,
+our %months = ('number' => qr/^(\d{1,2})$/i,
+               'hour'   => qr/stunde(?:n)/i,
+               'before' => qr/vor/i,
+               'after'  => qr/nach/i,
                );
 
-    return $ago{$string};
-}
+our %at = ('noon'     => qr/mittag/i,
+           'midnight' => qr/mitternacht/i,
+           );
 
-sub __now {
-    my ($self, $string) = @_;
+our %this_in = ('hour'   => qr/stunde(?:n)/i,
+                'week'   => qr/^woche(?:n)$/i,
+                'number' => qr/^(\d{1,2})/i,
+                );
 
-    my %now = ('day'    => qr/^tag(?:e)?$/i,
-               'week'   => qr/^woche(?:n)?$/i,
-               'month'  => qr/^monat(?:e)?$/i,
-               'year'   => qr/^jahr(?:e)?$/i,
-               'before' => qr/^vor$/i,
-               'from'   => qr/^nach$/i,
-               );
+our %next = ('week'   => qr/^woche(?:n)?$/i,
+             'day'    => qr/^tag(?:e)?$/i,
+             'month'  => qr/^monat(?:e)?$/i,
+             'year'   => qr/^jahr(?:e)?$/i,
+             'number' => qr/^(\d{1,2})$/,
+             );
 
-    return $now{$string};
-}
+our %last = ('week'   => qr/^woche(?:n)?$/i,
+             'day'    => qr/^tag(?:e)?$/i,
+             'month'  => qr/^monat(?:e)?$/i,
+             'year'   => qr/^jahr(?:e)?$/i,
+             'number' => qr/^(\d{1,2})$/,
+             );
 
-sub __daytime {
-    my ($self, $string) = @_;
+our %day = ('init'           => qr/^(?:heute|gestern|morgen)$/i,
+            'morning_prefix' => qr/^(?:diese|nächste|letze)(?:r|s|n)$/i,
+            'yesterday'      => qr/gestern/i,
+            'tomorrow'       => qr/morgen/,
+            'noonmidnight'   => qr/^mittag|mitternacht$/i,
+            'at'             => qr/^am$/i,
+            'when'           => qr/^diesen|heute|gestern$/i,
+            );
 
-    my %daytime = ('tokens'     => [ qr/\d/, qr/^am$/i ],
-                   'morning'    => qr/^Morgen$/,
-                   'afternoon'  => qr/^nachmittag$/i,
-                   'ago'        => qr/^her$/i,
-                   );
-
-    return $daytime{$string};
-}
-
-sub __months {
-    my ($self, $string) = @_;
-
-    my %months = ('number' => qr/^(\d{1,2})$/i,
-                  'hour'   => qr/stunde(?:n)/i,
-                  'before' => qr/vor/i,
-                  'after'  => qr/nach/i,
+our %setyearday = ('day' => qr/^tag$/i,
+                   'ext' => qr/^(\d{1,3})$/,
                   );
-
-    return $months{$string};
-}
-
-sub __at {
-    my ($self, $string) = @_;
-
-    my %at = ('noon'     => qr/mittag/i,
-              'midnight' => qr/mitternacht/i,
-              );
-
-    return $at{$string};
-}
-
-sub __this_in {
-    my ($self, $string) = @_;
-
-    my %this_in = ('hour'   => qr/stunde(?:n)/i,
-                   'week'   => qr/^woche(?:n)$/i,
-                   'number' => qr/^(\d{1,2})/i,
-                   );
-
-    return $this_in{$string};
-}
-
-sub __next {
-    my ($self, $string) = @_;
-
-    my %next = ('week'   => qr/^woche(?:n)?$/i,
-                'day'    => qr/^tag(?:e)?$/i,
-                'month'  => qr/^monat(?:e)?$/i,
-                'year'   => qr/^jahr(?:e)?$/i,
-                'number' => qr/^(\d{1,2})$/,
-                );
-
-    return $next{$string};
-}
-
-sub __last {
-    my ($self, $string) = @_;
-
-    my %last = ('week'   => qr/^woche(?:n)?$/i,
-                'day'    => qr/^tag(?:e)?$/i,
-                'month'  => qr/^monat(?:e)?$/i,
-                'year'   => qr/^jahr(?:e)?$/i,
-                'number' => qr/^(\d{1,2})$/,
-                );
-
-    return $last{$string};
-}
-
-sub __day {
-    my ($self, $string) = @_;
-
-    my %day = ('init'           => qr/^(?:heute|gestern|morgen)$/i,
-               'morning_prefix' => qr/^(?:diese|nächste|letze)(?:r|s|n)$/i,
-               'yesterday'      => qr/gestern/i,
-               'tomorrow'       => qr/morgen/,
-               'noonmidnight'   => qr/^mittag|mitternacht$/i,
-               'at'             => qr/^am$/i,
-               'when'           => qr/^diesen|heute|gestern$/i,
-               );
-
-    return $day{$string};
-}
-
-sub __setyearday {
-    my ($self, $string) = @_;
-
-    my %setyearday = ('day' => qr/^tag$/i,
-                      'ext' => qr/^(\d{1,3})$/,
-                      );
-
-    return $setyearday{$string};
-}
 
 1;
 __END__
