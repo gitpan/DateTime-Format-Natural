@@ -7,7 +7,7 @@ no warnings 'uninitialized';
 
 use base qw(DateTime::Format::Natural::Base);
 
-our $VERSION = '0.17';
+our $VERSION = '0.18';
 
 sub new {
     my ($class, %opts) = @_;
@@ -15,8 +15,9 @@ sub new {
     my $lang = $opts{lang} || 'en';
     my $mod  = 'DateTime::Format::Natural::Lang::'.uc($lang);
     eval "use $mod"; die $@ if $@;
+
     my $obj = {};
-    $obj->{data} = $mod->new();
+    $obj->{data} = $mod->__new();
     $obj->{lang} = $lang;
 
     return bless $obj, $class || ref($class);
@@ -68,43 +69,47 @@ sub parse_datetime {
 
         print "$self->{tokens}->[$self->{index}]\n" if $DEBUG;
 
-        $self->_day;
+        $self->{tokens}->[$self->{index}] =~ s/^(\d{1,2})(?:st|nd|rd|th)$/$1/i;
 
-        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->main('second')) {
+        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->__main('second')) {
             $self->{modified} = 1;
         }
 
-        if ($self->{tokens}->[$self->{index}+2] =~ $self->{data}->main('ago')) {
+        if ($self->{tokens}->[$self->{index}+2] =~ $self->{data}->__main('ago')) {
             $self->_ago;
         }
 
-        if ($self->{tokens}->[$self->{index}+3] =~ $self->{data}->main('now')) {
+        if ($self->{tokens}->[$self->{index}+3] =~ $self->{data}->__main('now')) {
             $self->_now;
         }
 
-        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->main('daytime')) {
-            $self->_daytime;
+        foreach my $daytime (@{$self->{data}->__main('daytime')}) {
+            if ($self->{tokens}->[$self->{index}] =~ $daytime) {
+                $self->_daytime;
+            }
         }
 
         if ($self->{tokens}->[$self->{index}+1] =~ /^(\d{4})$/) {
             $self->{datetime}->set_year($1);
         }
 
-        OUTER1: foreach my $match (@{$self->{data}->main('months')}) {
+        OUTER1: foreach my $match (@{$self->{data}->__main('months')}) {
             foreach my $i qw(-1 0 1 2) {
-                if ($self->{tokens}->[$self->{index}+$i] =~ /$match/i) {
+                if ($self->{tokens}->[$self->{index}+$i] =~ /^$match$/i) {
                     $dont_proceed1 = 1;
                     last OUTER1;
                 }
             }
         }
 
-       $self->_months unless $dont_proceed1;
+       unless ($dont_proceed1) {
+            $self->_months;
+       }
 
        if ($self->{tokens}->[$self->{index}] =~ /^at$/i) {
            next;
-       } elsif ($self->{tokens}->[$self->{index}] =~ $self->{data}->main('at_intro')) {
-        OUTER2: foreach my $match (@{$self->{data}->main('at_matches')}) {
+       } elsif ($self->{tokens}->[$self->{index}] =~ $self->{data}->__main('at_intro')) {
+        OUTER2: foreach my $match (@{$self->{data}->__main('at_matches')}) {
                 foreach my $i qw(-1 0 1 2) {
                     if ($self->{tokens}->[$self->{index}+$i] =~ /^$match$/i) {
                         $dont_proceed2 = 1;
@@ -121,57 +126,61 @@ sub parse_datetime {
             }
         }
 
-        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->main('number_intro')) {
-            OUTER3: foreach my $match (@{$self->{data}->main('number_matches')}) {
+        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->__main('number_intro')) {
+            OUTER3: foreach my $match (@{$self->{data}->__main('number_matches')}) {
                 foreach my $i qw(-1 0 1 2) {
-                    if ($self->{tokens}->[$self->{index}+$i] =~ /$match/i) {
+                    if ($self->{tokens}->[$self->{index}+$i] =~ /^$match$/i) {
                        $dont_proceed3 = 1;
                        last OUTER3;
                     }
                 }
             }
-            OUTER4: foreach my $weekday (keys %{$self->{weekdays}}) {
-                if ($self->{tokens}->[$self->{index}+1] =~ /$weekday/i) {
+            OUTER4: foreach my $weekday (keys %{$self->{data}->{weekdays}}) {
+                if ($self->{tokens}->[$self->{index}+1] =~ /^$weekday$/i) {
                     $dont_proceed3 = 1;
                     last OUTER4;
                 }
             }
-            $self->_number($1) unless $dont_proceed3;
+            unless ($dont_proceed3) {
+                $self->_number($1);
+            }
         }
 
         if ($self->{tokens}->[$self->{index}] =~ /^\d{4}$/) {
             $self->{datetime}->set_year($self->{tokens}->[$self->{index}]);
         }
 
-        if ($self->{tokens}->[$self->{index}]      !~ $self->{data}->main('weekdays')
-            && $self->{tokens}->[$self->{index}-1] !~ $self->{data}->main('weekdays')
-            && $self->{tokens}->[$self->{index}-2] !~ $self->{data}->main('weekdays')
-            && $self->{tokens}->[$self->{index}+1] !~ $self->{data}->main('weekdays')) {
+        if ($self->{tokens}->[$self->{index}]      !~ $self->{data}->__main('weekdays')
+            && $self->{tokens}->[$self->{index}-1] !~ $self->{data}->__main('weekdays')
+            && $self->{tokens}->[$self->{index}-2] !~ $self->{data}->__main('weekdays')
+            && $self->{tokens}->[$self->{index}+1] !~ $self->{data}->__main('weekdays')) {
             $self->_weekday;
+
         }
 
-        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->main('this_in')) {
+        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->__main('this_in')) {
             $self->{buffer} = 'this_in';
             next;
         } elsif ($self->{buffer} eq 'this_in') {
             $self->_this_in;
         }
 
-        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->main('next')) {
+        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->__main('next')) {
             $self->{buffer} = 'next';
             next;
         } elsif ($self->{buffer} eq 'next') {
             $self->_next;
         }
 
-        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->main('last')) {
+        if ($self->{tokens}->[$self->{index}] =~ $self->{data}->__main('last')) {
             $self->{buffer} = 'last';
             next;
         } elsif ($self->{buffer} eq 'last') {
             $self->_last;
         }
 
-         $self->_monthdays_limit;
+        $self->_day;
+        $self->_monthdays_limit;
     }
 
     return $self->_return_dt_object;

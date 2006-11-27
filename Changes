@@ -1,5 +1,16 @@
 Revision history for Perl extension DateTime::Format::Natural::EN.
 
+0.18 Sun Nov 26 17:35:17 CET 2006
+
+ - Fixed all occurences of the global weekday hash by adding the
+   missing key "{data}" to the variable lookup.
+
+0.17 Sun Nov 26 16:50:14 CET 2006
+
+ - Encapsulated the metadata within the language packages in an
+   object which class gets subclassed from Natural.pm.
+   [Tatsuhiko Miyagawa <miyagawa@gmail.com>]
+
 0.16 Sat Nov 25 18:09:48 CET 2006
 
  - Added missing '1;' to the documentation of Authoring.pod.

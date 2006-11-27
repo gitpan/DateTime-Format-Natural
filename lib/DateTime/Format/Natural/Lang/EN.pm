@@ -2,12 +2,13 @@ package DateTime::Format::Natural::Lang::EN;
 
 use strict;
 use warnings;
+no warnings 'uninitialized';
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 our (%data_weekdays, %data_months);
 
-sub new {
+sub __new {
     my $class = shift;
 
     my $obj = {};
@@ -29,15 +30,15 @@ sub new {
                                          October November December);
 }
 
-sub main {
+sub __main {
     my ($self, $string) = @_;
 
     my %main = ('second'         => qr/^second$/i,
                 'ago'            => qr/^ago$/i,
                 'now'            => qr/^now$/i,
-                'daytime'        => qr/^(?:morning|afternoon|evening)$/i,
+                'daytime'        => [qr/^(?:morning|afternoon|evening)$/i],
                 'months'         => [qw(in this)],
-                'at_intro'       => qr/^(\d{1,2})(\:\d{2})?(am|pm)?|(noon|midnight)$/i,
+                'at_intro'       => qr/^(\d{1,2})(?!st|nd|rd|th)(\:\d{2})?(am|pm)?|(noon|midnight)$/i,
                 'at_matches'     => [qw(day in month)],
                 'number_intro'   => qr/^(\d{1,2})(?:st|nd|rd|th)? ?$/i,
                 'number_matches' => [qw(day week month in)],
@@ -50,7 +51,7 @@ sub main {
     return $main{$string};
 }
 
-sub ago {
+sub __ago {
     my ($self, $string) = @_;
 
     my %ago = ('hour'  => qr/^hour(?:s)?$/i,
@@ -63,7 +64,7 @@ sub ago {
     return $ago{$string};
 }
 
-sub now {
+sub __now {
     my ($self, $string) = @_;
 
     my %now = ('day'    => qr/^day(?:s)?$/i,
@@ -77,7 +78,7 @@ sub now {
     return $now{$string};
 }
 
-sub daytime {
+sub __daytime {
     my ($self, $string) = @_;
 
     my %daytime = ('tokens'     => [ qr/\d/, qr/^in$/i, qr/^the$/i ],
@@ -88,7 +89,7 @@ sub daytime {
     return $daytime{$string};
 }
 
-sub months {
+sub __months {
     my ($self, $string) = @_;
 
     my %months = ('number' => qr/^(\d{1,2})(?:st|nd|rd|th)? ?$/i);
@@ -96,7 +97,7 @@ sub months {
     return $months{$string};
 }
 
-sub number {
+sub __number {
     my ($self, $string) = @_;
 
     my %number = ('month'  => qr/month(?:s)/i,
@@ -108,7 +109,7 @@ sub number {
     return $number{$string};
 }
 
-sub at {
+sub __at {
     my ($self, $string) = @_;
 
     my %at = ('noon'     => qr/noon/i,
@@ -118,8 +119,8 @@ sub at {
     return $at{$string};
 }
 
-sub this_in {
-    my ($self, $string);
+sub __this_in {
+    my ($self, $string) = @_;
 
     my %this_in = ('hour'   => qr/hour(?:s)/i,
                    'week'   => qr/^week$/i,
@@ -129,7 +130,7 @@ sub this_in {
     return $this_in{$string};
 }
 
-sub next {
+sub __next {
     my ($self, $string) = @_;
 
     my %next = ('week'   => qr/^week$/i,
@@ -142,7 +143,7 @@ sub next {
     return $next{$string};
 }
 
-sub last {
+sub __last {
     my ($self, $string) = @_;
 
     my %last = ('week'   => qr/^week$/i,
@@ -155,7 +156,7 @@ sub last {
     return $last{$string};
 }
 
-sub day {
+sub __day {
     my ($self, $string) = @_;
 
     my %day = ('init'         => qr/^(?:today|yesterday|tomorrow)$/i,
@@ -167,7 +168,7 @@ sub day {
     return $day{$string};
 }
 
-sub setyearday {
+sub __setyearday {
     my ($self, $string) = @_;
 
     my %setyearday = ('day' => qr/^day$/i,

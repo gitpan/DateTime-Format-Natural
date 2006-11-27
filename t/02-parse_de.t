@@ -25,7 +25,7 @@ my %simple = ('Donnerstag'               => '23.11.2006 01:13',
               'Sekunde'                  => '24.11.2006 01:13',
               'Gestern um 4:00'          => '23.11.2006 04:00',
               'Letzten Freitag um 20:00' => '17.11.2006 20:00',
-              'Morgen um 6:45pm'         => '25.11.2006 18:45',
+              'morgen um 6:45pm'         => '25.11.2006 18:45',
               'Gestern nachmittag'       => '23.11.2006 12:00',
               'Donnerstag letzte Woche'  => '16.11.2006 01:13');
 
@@ -33,7 +33,7 @@ my %complex = ('3 Jahre her'                     => '24.11.2003 01:13',
                '5 Monate vor jetzt'              => '24.06.2006 01:13',
                '7 Stunden her'                   => '23.11.2006 18:13',
                'in 3 Stunden'                    => '24.11.2006 04:13',
-               'Morgen 1 Jahr her'               => '25.11.2005 01:13',
+               'morgen 1 Jahr her'               => '25.11.2005 01:13',
                'Samstag 3 Tage her um 5:00pm'    => '22.11.2006 17:00',
                '4 Tag letzte Woche'              => '16.11.2006 01:13',
                '3 Mittwoch in November'          => '15.11.2006 01:13',
@@ -65,9 +65,9 @@ sub compare {
 sub compare_strings {
     my ($string, $result) = @_;
 
-    my $parse = DateTime::Format::Natural->new();
+    my $parse = DateTime::Format::Natural->new(lang => 'de');
     $parse->_set_datetime($year, $month, $day, $hour, $min);
-    my $dt = $parse->parse_datetime(string => $string, lang => 'ge');
+    my $dt = $parse->parse_datetime(string => $string);
     my $res_string = sprintf("%02s.%02s.%4s %02s:%02s", $dt->day, $dt->month, $dt->year, $dt->hour, $dt->min);
     is($res_string, $result, $string);
 }

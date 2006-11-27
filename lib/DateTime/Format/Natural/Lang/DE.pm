@@ -1,13 +1,14 @@
 package DateTime::Format::Natural::Lang::DE;
 
 use strict;
+no strict 'refs';
 use warnings;
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 our (%data_weekdays, %data_months);
 
-sub new {
+sub __new {
     my $class = shift;
 
     my $obj = {};
@@ -29,18 +30,18 @@ sub new {
                                          Oktober November Dezember);
 }
 
-sub main {
+sub __main {
     my ($self, $string) = @_;
 
     my %main = ('second'         => qr/^sekunde$/i,
                 'ago'            => qr/^her$/i,
                 'now'            => qr/^jetzt$/i,
-                'daytime'        => qr/^(?:morgen|nachmittag|abend)$/i,
+                'daytime'        => [qr/^(?:nachmittag|abend)$/i, qr/^Morgen$/],
                 'months'         => [qw(in diesem)],
                 'at_intro'       => qr/^(\d{1,2})(\:\d{2})?(am|pm)?|(mittag|mitternacht)$/i,
                 'at_matches'     => [qw(tag in monat)],
                 'number_intro'   => qr/^(\d{1,2})$/i,
-                'number_matches' => [qw(tag tage woche wochen monat monate morgen abend jahr in)],
+                'number_matches' => [qw(tag tage woche wochen monat monate Morgen abend jahr in)],
                 'weekdays'       => qr/^(?:diesen|nächsten|letzten)$/i,
                 'this_in'        => qr/^(?:diese(?:r|s|n)|in)$/i,
                 'next'           => qr/^nächste(?:r|s|n)$/i,
@@ -50,7 +51,7 @@ sub main {
     return $main{$string};
 }
 
-sub ago {
+sub __ago {
     my ($self, $string) = @_;
 
     my %ago = ('hour'  => qr/^stunde(?:n)?$/i,
@@ -63,7 +64,7 @@ sub ago {
     return $ago{$string};
 }
 
-sub now {
+sub __now {
     my ($self, $string) = @_;
 
     my %now = ('day'    => qr/^tag(?:e)?$/i,
@@ -77,11 +78,11 @@ sub now {
     return $now{$string};
 }
 
-sub daytime {
+sub __daytime {
     my ($self, $string) = @_;
 
     my %daytime = ('tokens'     => [ qr/\d/, qr/^am$/i ],
-                   'morning'    => qr/^morgen$/i,
+                   'morning'    => qr/^Morgen$/,
                    'afternoon'  => qr/^nachmittag$/i,
                    'ago'        => qr/^her$/i,
                    );
@@ -89,27 +90,19 @@ sub daytime {
     return $daytime{$string};
 }
 
-sub months {
+sub __months {
     my ($self, $string) = @_;
 
-    my %months = ('number' => qr/^(\d{1,2})$/i);
-
-    return $months{$string};
-}
-
-sub number {
-    my ($self, $string) = @_;
-
-    my %number = ('month'  => qr/monat(?:e)/i,
+    my %months = ('number' => qr/^(\d{1,2})$/i,
                   'hour'   => qr/stunde(?:n)/i,
                   'before' => qr/vor/i,
                   'after'  => qr/nach/i,
                   );
 
-    return $number{$string};
+    return $months{$string};
 }
 
-sub at {
+sub __at {
     my ($self, $string) = @_;
 
     my %at = ('noon'     => qr/mittag/i,
@@ -119,7 +112,7 @@ sub at {
     return $at{$string};
 }
 
-sub this_in {
+sub __this_in {
     my ($self, $string) = @_;
 
     my %this_in = ('hour'   => qr/stunde(?:n)/i,
@@ -130,7 +123,7 @@ sub this_in {
     return $this_in{$string};
 }
 
-sub next {
+sub __next {
     my ($self, $string) = @_;
 
     my %next = ('week'   => qr/^woche(?:n)?$/i,
@@ -143,7 +136,7 @@ sub next {
     return $next{$string};
 }
 
-sub last {
+sub __last {
     my ($self, $string) = @_;
 
     my %last = ('week'   => qr/^woche(?:n)?$/i,
@@ -156,13 +149,13 @@ sub last {
     return $last{$string};
 }
 
-sub day {
+sub __day {
     my ($self, $string) = @_;
 
     my %day = ('init'           => qr/^(?:heute|gestern|morgen)$/i,
                'morning_prefix' => qr/^(?:diese|nächste|letze)(?:r|s|n)$/i,
                'yesterday'      => qr/gestern/i,
-               'tomorrow'       => qr/morgen/i,
+               'tomorrow'       => qr/morgen/,
                'noonmidnight'   => qr/^mittag|mitternacht$/i,
                'at'             => qr/^am$/i,
                'when'           => qr/^diesen|heute|gestern$/i,
@@ -171,7 +164,7 @@ sub day {
     return $day{$string};
 }
 
-sub setyearday {
+sub __setyearday {
     my ($self, $string) = @_;
 
     my %setyearday = ('day' => qr/^tag$/i,
