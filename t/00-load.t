@@ -3,10 +3,11 @@
 use strict;
 use warnings;
 
-use Test::More tests => 1;
+use Test::More tests => 4;
 
 BEGIN {
-	use_ok('DateTime::Format::Natural::EN');
+	use_ok('DateTime::Format::Natural');
+	use_ok('DateTime::Format::Natural::Base');
+	use_ok('DateTime::Format::Natural::Lang::DE');
+	use_ok('DateTime::Format::Natural::Lang::EN');
 }
-
-diag("Testing DateTime::Format::Natural::EN $DateTime::Format::Natural::EN::VERSION, Perl $], $^X");

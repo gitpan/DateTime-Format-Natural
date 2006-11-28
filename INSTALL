@@ -1,4 +1,4 @@
-To install DateTime::Format::Natural::EN, type the following:
+To install DateTime::Format::Natural, type the following:
 
    perl Build.PL
    ./Build

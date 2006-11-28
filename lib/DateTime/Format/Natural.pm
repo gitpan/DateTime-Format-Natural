@@ -7,7 +7,7 @@ no warnings 'uninitialized';
 
 use base qw(DateTime::Format::Natural::Base);
 
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 
 sub new {
     my ($class, %opts) = @_;

@@ -1,4 +1,9 @@
-Revision history for Perl extension DateTime::Format::Natural::EN.
+Revision history for Perl extension DateTime::Format::Natural.
+
+0.21 Tue Nov 28 09:31:20 CET 2006
+
+ - Corrected the classes names provided to use_ok() in 00-load.t.
+   [SEKIMURA sekimura@gmail.com]
 
 0.20 Tue Nov 28 01:44:46 CET 2006
 
@@ -7,7 +12,7 @@ Revision history for Perl extension DateTime::Format::Natural::EN.
 
 0.19 Mon Nov 27 20:06:17 CET 2006
 
- - Added to DE.pm & EN.pm an AUTOLOAD handler for both of them.
+ - Added to DE.pm & EN.pm an AUTOLOAD handler for each of them.
    The subroutine called prefixed with two underscores will be 
    translated to an according variable name without underscores.
    The parameter to the subroutine will function as variable
