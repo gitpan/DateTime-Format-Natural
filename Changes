@@ -1,5 +1,10 @@
 Revision history for Perl extension DateTime::Format::Natural::EN.
 
+0.20 Tue Nov 28 01:44:46 CET 2006
+
+ - Optimised the regular expressions used in the AUTOLOAD routine 
+   in the language classes.
+
 0.19 Mon Nov 27 20:06:17 CET 2006
 
  - Added to DE.pm & EN.pm an AUTOLOAD handler for both of them.

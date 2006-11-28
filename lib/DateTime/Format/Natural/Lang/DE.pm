@@ -22,10 +22,10 @@ AUTOLOAD {
     my ($self, $exp) = @_;
 
     my $sub = $AUTOLOAD;
-    $sub =~ s/.*::(.*)/$1/;
+    $sub =~ s/^.*:://;
 
     if (substr($sub, 0, 2) eq '__') {
-       $sub =~ s/^__(.*)$/$1/;
+       $sub =~ s/^__//;
        return ${$sub}{$exp};
     }
 }

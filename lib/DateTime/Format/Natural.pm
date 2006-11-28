@@ -7,13 +7,13 @@ no warnings 'uninitialized';
 
 use base qw(DateTime::Format::Natural::Base);
 
-our $VERSION = '0.19';
+our $VERSION = '0.20';
 
 sub new {
     my ($class, %opts) = @_;
 
     my $lang = $opts{lang} || 'en';
-    my $mod  = 'DateTime::Format::Natural::Lang::'.uc($lang);
+    my $mod  = __PACKAGE__.'::Lang::'.uc($lang);
     eval "use $mod"; die $@ if $@;
 
     my $obj = {};
