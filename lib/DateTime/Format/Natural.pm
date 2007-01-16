@@ -1,20 +1,19 @@
 package DateTime::Format::Natural;
 
 use strict;
-no strict 'refs';
 use warnings;
-no warnings 'uninitialized';
 
 use base qw(DateTime::Format::Natural::Base);
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 sub new {
     my ($class, %opts) = @_;
 
     my $lang = $opts{lang} || 'en';
     my $mod  = __PACKAGE__.'::Lang::'.uc($lang);
-    eval "use $mod"; die $@ if $@;
+    eval "use $mod";
+    die $@ if $@;
 
     my $obj = {};
     $obj->{data} = $mod->__new();
@@ -66,6 +65,7 @@ sub parse_datetime {
         $dont_proceed3) = (0,0,0);
 
     for ($self->{index} = 0; $self->{index} < @{$self->{tokens}}; $self->{index}++) {
+        no warnings 'uninitialized';
 
         print "$self->{tokens}->[$self->{index}]\n" if $DEBUG;
 

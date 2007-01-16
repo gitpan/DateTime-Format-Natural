@@ -1,5 +1,16 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.22 Tue Jan 16 02:58:15 CET 2007
+
+ - Previously four digits were occasionally interpreted as year
+   and as well as time based upon context. Disambiguated usage
+   as year (applies to all Lang:: classes) and fixed all test
+   cases were bogus return values from parse_datetime() have
+   been expected in order to have no tests fail.
+
+ - Bound the temporary disablement of strictness for references
+   to a tighter scope (applies to all Lang:: classes).
+
 0.21 Tue Nov 28 09:31:20 CET 2006
 
  - Corrected the classes names provided to use_ok() in 00-load.t.
@@ -7,7 +18,7 @@ Revision history for Perl extension DateTime::Format::Natural.
 
 0.20 Tue Nov 28 01:44:46 CET 2006
 
- - Optimised the regular expressions used in the AUTOLOAD routine 
+ - Optimised the regular expressions used in the AUTOLOAD routine
    in the language classes.
 
 0.19 Mon Nov 27 20:06:17 CET 2006

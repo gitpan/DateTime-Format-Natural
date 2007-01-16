@@ -1,10 +1,9 @@
 package DateTime::Format::Natural::Lang::DE;
 
 use strict;
-no strict 'refs';
 use warnings;
 
-our $VERSION = '0.3';
+our $VERSION = '0.4';
 
 our ($AUTOLOAD, %data_weekdays, %data_months);
 
@@ -26,6 +25,7 @@ AUTOLOAD {
 
     if (substr($sub, 0, 2) eq '__') {
        $sub =~ s/^__//;
+       no strict 'refs';
        return ${$sub}{$exp};
     }
 }
@@ -33,8 +33,8 @@ AUTOLOAD {
 {
     my $i = 1;
 
-    %data_weekdays = map {  $_ => $i++ } qw(Montag Dienstag Mittwoch Donnerstag
-                                            Freitag Samstag Sonntag);
+    %data_weekdays = map { $_ => $i++ } qw(Montag Dienstag Mittwoch Donnerstag
+                                           Freitag Samstag Sonntag);
     $i = 1;
 
     %data_months = map { $_ => $i++ } qw(Januar Februar März April
@@ -47,7 +47,7 @@ our %main = ('second'         => qr/^sekunde$/i,
              'now'            => qr/^jetzt$/i,
              'daytime'        => [qr/^(?:nachmittag|abend)$/i, qr/^Morgen$/],
              'months'         => [qw(in diesem)],
-             'at_intro'       => qr/^(\d{1,2})(\:\d{2})?(am|pm)?|(mittag|mitternacht)$/i,
+             'at_intro'       => qr/^(\d{1,2})(?!\d)(\:\d{2})?(am|pm)?|(mittag|mitternacht)$/i,
              'at_matches'     => [qw(tag in monat)],
              'number_intro'   => qr/^(\d{1,2})$/i,
              'number_matches' => [qw(tag tage woche wochen monat monate Morgen abend jahr in)],
@@ -143,11 +143,11 @@ Below are some examples of human readable date/time input in german:
  Freitag 13:00
  Mon 2:35
  4pm
- 6 am morgen
+ 6 am Morgen
  Samstag 7 am Abend
  Gestern
  Heute
- Morgen
+ morgen
  diesen Dienstag
  nächster Monat
  diesen Morgen

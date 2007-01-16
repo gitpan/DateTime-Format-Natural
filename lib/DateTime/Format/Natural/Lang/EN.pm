@@ -1,11 +1,9 @@
 package DateTime::Format::Natural::Lang::EN;
 
 use strict;
-no strict 'refs';
 use warnings;
-no warnings 'uninitialized';
 
-our $VERSION = '0.4';
+our $VERSION = '0.5';
 
 our ($AUTOLOAD, %data_weekdays, %data_months);
 
@@ -27,6 +25,7 @@ AUTOLOAD {
 
     if (substr($sub, 0, 2) eq '__') {
        $sub =~ s/^__//;
+       no strict 'refs';
        return ${$sub}{$exp};
     }
 }
@@ -34,8 +33,8 @@ AUTOLOAD {
 {
     my $i = 1;
 
-    %data_weekdays = map {  $_ => $i++ } qw(Monday Tuesday Wednesday Thursday
-                                            Friday Saturday Sunday);
+    %data_weekdays = map { $_ => $i++ } qw(Monday Tuesday Wednesday Thursday
+                                           Friday Saturday Sunday);
     $i = 1;
 
     %data_months = map { $_ => $i++ } qw(January February March April
@@ -48,7 +47,7 @@ our %main = ('second'         => qr/^second$/i,
              'now'            => qr/^now$/i,
              'daytime'        => [qr/^(?:morning|afternoon|evening)$/i],
              'months'         => [qw(in this)],
-             'at_intro'       => qr/^(\d{1,2})(?!st|nd|rd|th)(\:\d{2})?(am|pm)?|(noon|midnight)$/i,
+             'at_intro'       => qr/^(\d{1,2})(?!\d|st|nd|rd|th)(\:\d{2})?(am|pm)?|(noon|midnight)$/i,
              'at_matches'     => [qw(day in month)],
              'number_intro'   => qr/^(\d{1,2})(?:st|nd|rd|th)? ?$/i,
              'number_matches' => [qw(day week month in)],
