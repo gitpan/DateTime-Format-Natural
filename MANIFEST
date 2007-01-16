@@ -4,6 +4,7 @@ INSTALL
 lib/DateTime/Format/Natural.pm
 lib/DateTime/Format/Natural/Base.pm
 lib/DateTime/Format/Natural/Lang/Authoring.pod
+lib/DateTime/Format/Natural/Lang/Base.pm
 lib/DateTime/Format/Natural/Lang/DE.pm
 lib/DateTime/Format/Natural/Lang/EN.pm
 Makefile.PL

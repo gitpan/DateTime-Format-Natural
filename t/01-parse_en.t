@@ -2,7 +2,6 @@
 
 use strict;
 use warnings;
-no strict 'refs';
 
 use DateTime::Format::Natural;
 use Test::More tests => 39;

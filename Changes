@@ -1,5 +1,12 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.23 Tue Jan 16 19:51:50 CET 2007
+
+ - The language metadata classes have an AUTOLOAD handler & __new
+   constructor automatically exported to their namespaces. Because
+   some local fiddling with AUTOLOAD and dynamic variable lookup is
+   done, a bunch of symbolic references are created on-the-fly.
+
 0.22 Tue Jan 16 02:58:15 CET 2007
 
  - Previously four digits were occasionally interpreted as year

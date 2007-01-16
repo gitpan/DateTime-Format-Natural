@@ -2,33 +2,11 @@ package DateTime::Format::Natural::Lang::EN;
 
 use strict;
 use warnings;
+use base qw(DateTime::Format::Natural::Lang::Base);
 
 our $VERSION = '0.5';
 
-our ($AUTOLOAD, %data_weekdays, %data_months);
-
-sub __new {
-    my $class = shift;
-
-    my $obj = {};
-    $obj->{weekdays} = \%data_weekdays;
-    $obj->{months}   = \%data_months;
-
-    return bless $obj, $class || ref($class);
-}
-
-AUTOLOAD {
-    my ($self, $exp) = @_;
-
-    my $sub = $AUTOLOAD;
-    $sub =~ s/^.*:://;
-
-    if (substr($sub, 0, 2) eq '__') {
-       $sub =~ s/^__//;
-       no strict 'refs';
-       return ${$sub}{$exp};
-    }
-}
+our (%data_weekdays, %data_months);
 
 {
     my $i = 1;
@@ -123,7 +101,7 @@ __END__
 
 =head1 NAME
 
-DateTime::Format::Natural::Lang::EN - English specific regular expressions and variables
+DateTime::Format::Natural::Lang::EN - English translation metadata
 
 =head1 DESCRIPTION
 

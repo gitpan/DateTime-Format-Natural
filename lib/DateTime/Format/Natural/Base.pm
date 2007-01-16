@@ -5,12 +5,12 @@ no strict 'refs';
 use warnings;
 no warnings 'uninitialized';
 
-our $VERSION = '0.5';
-
 use DateTime;
 use Date::Calc qw(Add_Delta_Days Days_in_Month
                   Decode_Day_of_Week
                   Nth_Weekday_of_Month_Year);
+
+our $VERSION = '0.5';
 
 sub _ago {
     my $self = shift;
@@ -487,7 +487,7 @@ __END__
 
 =head1 NAME
 
-DateTime::Format::Natural::Base - Default methods for DateTime::Format::Natural
+DateTime::Format::Natural::Base - Base class for DateTime::Format::Natural
 
 =head1 SYNOPSIS
 
@@ -495,8 +495,8 @@ DateTime::Format::Natural::Base - Default methods for DateTime::Format::Natural
 
 =head1 DESCRIPTION
 
-The DateTime::Format::Natural::Base module defines the core functionality of
-DateTime::Format::Natural.
+The C<DateTime::Format::Natural::Base> module defines the core functionality of
+C<DateTime::Format::Natural>.
 
 =head1 SEE ALSO
 

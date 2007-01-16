@@ -5,12 +5,12 @@ NAME
 SYNOPSIS
      use DateTime::Format::Natural;
 
-     $parse = DateTime::Format::Natural->new();
+     $parse = DateTime::Format::Natural->new;
 
      $dt = $parse->parse_datetime($date_string);
 
 DESCRIPTION
-    "DateTime::Format::Natural" consists of a method, "parse_datetime()",
+    "DateTime::Format::Natural" consists of a method, "parse_datetime",
     which takes a string with a human readable date/time and creates a
     machine readable one by applying natural parsing logic.
 
@@ -33,18 +33,18 @@ FUNCTIONS
     The options may contain the keys "string", & "debug". "string" may
     consist of the datestring, whereas "debug" holds the boolean value for
     the debugging option. If debugging is enabled, each token that is
-    analysed will be output to stdout with a trailing newline.
+    analysed will be output to STDOUT with a trailing newline appended.
 
     The "string" parameter is required.
 
     Returns a "DateTime" object.
 
+  format_datetime
+    Not implemented yet.
+
 EXAMPLES
     See the modules "DateTime::Format::Natural::Lang::*" for a overview of
     valid input.
-
-  format_datetime
-    Not implemented yet.
 
 SEE ALSO
     DateTime, Date::Calc, <http://datetime.perl.org/>

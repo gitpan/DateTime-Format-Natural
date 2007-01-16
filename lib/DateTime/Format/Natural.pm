@@ -2,10 +2,9 @@ package DateTime::Format::Natural;
 
 use strict;
 use warnings;
-
 use base qw(DateTime::Format::Natural::Base);
 
-our $VERSION = '0.22';
+our $VERSION = '0.23';
 
 sub new {
     my ($class, %opts) = @_;
@@ -52,17 +51,15 @@ sub parse_datetime {
             $self->{datetime}->set_month($bits[1]);
             $self->{datetime}->set_year($bits[2]);
 
-            $self->{modified} = 1;
+            $self->_set_modified;
 
-            return $self->_return_dt_object;
+            return $self->_get_datetime_object;
         }
     } else {
         @{$self->{tokens}} = split ' ', $date_string;
     }
 
-    my ($dont_proceed1,
-        $dont_proceed2,
-        $dont_proceed3) = (0,0,0);
+    my ($dont_proceed1, $dont_proceed2, $dont_proceed3) = (0,0,0);
 
     for ($self->{index} = 0; $self->{index} < @{$self->{tokens}}; $self->{index}++) {
         no warnings 'uninitialized';
@@ -72,7 +69,7 @@ sub parse_datetime {
         $self->{tokens}->[$self->{index}] =~ s/^(\d{1,2})(?:st|nd|rd|th)$/$1/i;
 
         if ($self->{tokens}->[$self->{index}] =~ $self->{data}->__main('second')) {
-            $self->{modified} = 1;
+            $self->_set_modified;
         }
 
         if ($self->{tokens}->[$self->{index}+2] =~ $self->{data}->__main('ago')) {
@@ -118,11 +115,7 @@ sub parse_datetime {
                 }
             }
             unless ($dont_proceed2) {
-                my $hour_token    = $1;
-                my $min_token     = $2;
-                my $timeframe     = $3;
-                my $noon_midnight = $4;
-                $self->_at($hour_token, $min_token, $timeframe, $noon_midnight);
+                $self->_at($1, $2, $3, $4);
             }
         }
 
@@ -183,15 +176,17 @@ sub parse_datetime {
         $self->_monthdays_limit;
     }
 
-    return $self->_return_dt_object;
+    return $self->_get_datetime_object;
 }
 
-sub _set_modified { $_[0]->{modified} = 1 }
+sub _get_modified   { $_[0]->{modified}     }
+sub _set_modified   { $_[0]->{modified} = 1 }
+sub _unset_modified { $_[0]->{modified} = 0 }
 
-sub _return_dt_object {
+sub _get_datetime_object {
     my $self = shift;
 
-    die "$self->{date_string} not valid input, exiting.\n" unless $self->{modified};
+    die "$self->{date_string} not valid input, exiting.\n" unless $self->_get_modified;
 
     $self->{year}  = $self->{datetime}->year;
     $self->{month} = $self->{datetime}->month;
@@ -206,7 +201,7 @@ sub _return_dt_object {
     $self->{day}   = "0$self->{day}"   unless length($self->{day})   == 2;
     $self->{month} = "0$self->{month}" unless length($self->{month}) == 2;
 
-    $self->{modified} = 0;
+    $self->_unset_modified;
 
     my $dt = DateTime->new(year   => $self->{year},
                            month  => $self->{month},
@@ -217,7 +212,7 @@ sub _return_dt_object {
     return $dt;
 }
 
-# for debugging purpose only
+# solely for debugging purpose
 sub _set_datetime {
     my ($self, $year, $month, $day, $hour, $min) = @_;
 
@@ -243,14 +238,14 @@ DateTime::Format::Natural - Create machine readable date/time with natural parsi
 
  use DateTime::Format::Natural;
 
- $parse = DateTime::Format::Natural->new();
+ $parse = DateTime::Format::Natural->new;
 
  $dt = $parse->parse_datetime($date_string);
 
 =head1 DESCRIPTION
 
-C<DateTime::Format::Natural> consists of a method, C<parse_datetime()>, which takes a 
-string with a human readable date/time and creates a machine readable one by applying 
+C<DateTime::Format::Natural> consists of a method, C<parse_datetime>, which takes a
+string with a human readable date/time and creates a machine readable one by applying
 natural parsing logic.
 
 =head1 FUNCTIONS
@@ -272,22 +267,22 @@ Creates a C<DateTime> object from a human readable date/time string.
 
  $dt = $parse->parse_datetime(string => $date_string, debug => 1);
 
-The options may contain the keys C<string>, & C<debug>.
-C<string> may consist of the datestring, whereas C<debug> holds the boolean value for the
-debugging option. If debugging is enabled, each token that is analysed will be output to 
-stdout with a trailing newline.
+The options may contain the keys C<string>, & C<debug>. C<string> may consist of the
+datestring, whereas C<debug> holds the boolean value for the debugging option. If
+debugging is enabled, each token that is analysed will be output to STDOUT with a
+trailing newline appended.
 
 The C<string> parameter is required.
 
 Returns a C<DateTime> object.
 
-=head1 EXAMPLES
-
-See the modules C<DateTime::Format::Natural::Lang::*> for a overview of valid input.
-
 =head2 format_datetime
 
 Not implemented yet.
+
+=head1 EXAMPLES
+
+See the modules C<DateTime::Format::Natural::Lang::*> for a overview of valid input.
 
 =head1 SEE ALSO
 
