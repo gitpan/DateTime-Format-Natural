@@ -30,7 +30,7 @@ FUNCTIONS
 
      $dt = $parse->parse_datetime(string => $date_string, debug => 1);
 
-    The options may contain the keys "string", & "debug". "string" may
+    The options may contain the keys "string" & "debug". "string" may
     consist of the datestring, whereas "debug" holds the boolean value for
     the debugging option. If debugging is enabled, each token that is
     analysed will be output to STDOUT with a trailing newline appended.
@@ -47,7 +47,7 @@ EXAMPLES
     valid input.
 
 SEE ALSO
-    DateTime, Date::Calc, <http://datetime.perl.org/>
+    DateTime, Date::Calc, <http://datetime.perl.org>
 
 AUTHOR
     Steven Schubiger <schubiger@cpan.org>

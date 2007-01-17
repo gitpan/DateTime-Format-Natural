@@ -4,9 +4,10 @@ use strict;
 use warnings;
 use base qw(DateTime::Format::Natural::Lang::Base);
 
-our $VERSION = '0.5';
+our $VERSION = '0.6';
 
-our (%data_weekdays, %data_months);
+our (%data_weekdays, %data_months, %main, %ago, %now, %daytime, %months,
+     %number, %at, %this_in, %next, %last, %day, %setyearday);
 
 {
     my $i = 1;
@@ -20,88 +21,88 @@ our (%data_weekdays, %data_months);
                                          October November December);
 }
 
-our %main = ('second'         => qr/^second$/i,
-             'ago'            => qr/^ago$/i,
-             'now'            => qr/^now$/i,
-             'daytime'        => [qr/^(?:morning|afternoon|evening)$/i],
-             'months'         => [qw(in this)],
-             'at_intro'       => qr/^(\d{1,2})(?!\d|st|nd|rd|th)(\:\d{2})?(am|pm)?|(noon|midnight)$/i,
-             'at_matches'     => [qw(day in month)],
-             'number_intro'   => qr/^(\d{1,2})(?:st|nd|rd|th)? ?$/i,
-             'number_matches' => [qw(day week month in)],
-             'weekdays'       => qr/^(?:this|next|last)$/i,
-             'this_in'        => qr/^(?:this|in)$/i,
-             'next'           => qr/^next$/i,
-             'last'           => qr/^last$/i,
-             );
+%main = ('second'         => qr/^second$/i,
+         'ago'            => qr/^ago$/i,
+         'now'            => qr/^now$/i,
+         'daytime'        => [qr/^(?:morning|afternoon|evening)$/i],
+         'months'         => [qw(in this)],
+         'at_intro'       => qr/^(\d{1,2})(?!\d|st|nd|rd|th)(\:\d{2})?(am|pm)?|(noon|midnight)$/i,
+         'at_matches'     => [qw(day in month)],
+         'number_intro'   => qr/^(\d{1,2})(?:st|nd|rd|th)? ?$/i,
+         'number_matches' => [qw(day week month in)],
+         'weekdays'       => qr/^(?:this|next|last)$/i,
+         'this_in'        => qr/^(?:this|in)$/i,
+         'next'           => qr/^next$/i,
+         'last'           => qr/^last$/i,
+         );
 
-our %ago = ('hour'  => qr/^hour(?:s)?$/i,
-            'day'   => qr/^day(?:s)?$/i,
-            'week'  => qr/^week(?:s)?$/i,
-            'month' => qr/^month(?:s)?$/i,
-            'year'  => qr/^year(?:s)?$/i,
+%ago = ('hour'  => qr/^hour(?:s)?$/i,
+        'day'   => qr/^day(?:s)?$/i,
+        'week'  => qr/^week(?:s)?$/i,
+        'month' => qr/^month(?:s)?$/i,
+        'year'  => qr/^year(?:s)?$/i,
+        );
+
+%now = ('day'    => qr/^day(?:s)?$/i,
+        'week'   => qr/^week(?:s)?$/i,
+        'month'  => qr/^month(?:s)?$/i,
+        'year'   => qr/^year(?:s)?$/i,
+        'before' => qr/^before$/i,
+        'from'   => qr/^from$/i,
+        );
+
+%daytime = ('tokens'     => [ qr/\d/, qr/^in$/i, qr/^the$/i ],
+            'morning'    => qr/^morning$/i,
+            'afternoon'  => qr/^afternoon$/i,
             );
 
-our %now = ('day'    => qr/^day(?:s)?$/i,
-            'week'   => qr/^week(?:s)?$/i,
-            'month'  => qr/^month(?:s)?$/i,
-            'year'   => qr/^year(?:s)?$/i,
-            'before' => qr/^before$/i,
-            'from'   => qr/^from$/i,
-            );
+%months = ('number' => qr/^(\d{1,2})(?:st|nd|rd|th)? ?$/i);
 
-our %daytime = ('tokens'     => [ qr/\d/, qr/^in$/i, qr/^the$/i ],
-                'morning'    => qr/^morning$/i,
-                'afternoon'  => qr/^afternoon$/i,
-                );
-
-our %months = ('number' => qr/^(\d{1,2})(?:st|nd|rd|th)? ?$/i);
-
-our %number = ('month'  => qr/month(?:s)/i,
-               'hour'   => qr/hour(?:s)/i,
-               'before' => qr/before/i,
-               'after'  => qr/after/i,
-               );
-
-our %at = ('noon'     => qr/noon/i,
-           'midnight' => qr/midnight/i,
+%number = ('month'  => qr/month(?:s)/i,
+           'hour'   => qr/hour(?:s)/i,
+           'before' => qr/before/i,
+           'after'  => qr/after/i,
            );
 
-our %this_in = ('hour'   => qr/hour(?:s)/i,
-                'week'   => qr/^week$/i,
-                'number' => qr/^(\d{1,2})(?:st|nd|rd|th)?$/i,
-                );
+%at = ('noon'     => qr/noon/i,
+       'midnight' => qr/midnight/i,
+       );
 
-our %next = ('week'   => qr/^week$/i,
-             'day'    => qr/^day$/i,
-             'month'  => qr/^month$/i,
-             'year'   => qr/^year$/i,
-             'number' => qr/^(\d{1,2})(?:st|nd|rd|th)$/,
-             );
-
-our %last = ('week'   => qr/^week$/i,
-             'day'    => qr/^day$/i,
-             'month'  => qr/^month$/i,
-             'year'   => qr/^year$/i,
-             'number' => qr/^(\d{1,2})(?:st|nd|rd|th)$/,
-             );
-
-our %day = ('init'         => qr/^(?:today|yesterday|tomorrow)$/i,
-            'yesterday'    => qr/yesterday/i,
-            'tomorrow'     => qr/tomorrow/i,
-            'noonmidnight' => qr/^noon|midnight$/i,
+%this_in = ('hour'   => qr/hour(?:s)/i,
+            'week'   => qr/^week$/i,
+            'number' => qr/^(\d{1,2})(?:st|nd|rd|th)?$/i,
             );
 
-our %setyearday = ('day' => qr/^day$/i,
-                   'ext' => qr/^(\d{1,3})(?:st|nd|rd|th)$/,
-                   );
+%next = ('week'   => qr/^week$/i,
+         'day'    => qr/^day$/i,
+         'month'  => qr/^month$/i,
+         'year'   => qr/^year$/i,
+         'number' => qr/^(\d{1,2})(?:st|nd|rd|th)$/,
+         );
+
+%last = ('week'   => qr/^week$/i,
+         'day'    => qr/^day$/i,
+         'month'  => qr/^month$/i,
+         'year'   => qr/^year$/i,
+         'number' => qr/^(\d{1,2})(?:st|nd|rd|th)$/,
+         );
+
+%day = ('init'         => qr/^(?:today|yesterday|tomorrow)$/i,
+        'yesterday'    => qr/yesterday/i,
+        'tomorrow'     => qr/tomorrow/i,
+        'noonmidnight' => qr/^noon|midnight$/i,
+        );
+
+%setyearday = ('day' => qr/^day$/i,
+               'ext' => qr/^(\d{1,3})(?:st|nd|rd|th)$/,
+               );
 
 1;
 __END__
 
 =head1 NAME
 
-DateTime::Format::Natural::Lang::EN - English translation metadata
+DateTime::Format::Natural::Lang::EN - English language metadata
 
 =head1 DESCRIPTION
 
@@ -166,7 +167,7 @@ Below are some examples of human readable date/time input in english:
 
 =head1 SEE ALSO
 
-L<DateTime::Format::Natural>, L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org/>
+L<DateTime::Format::Natural>, L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org>
 
 =head1 AUTHOR
 

@@ -4,9 +4,10 @@ use strict;
 use warnings;
 use base qw(DateTime::Format::Natural::Lang::Base);
 
-our $VERSION = '0.4';
+our $VERSION = '0.5';
 
-our (%data_weekdays, %data_months);
+our (%data_weekdays, %data_months, %main, %ago, %now, %daytime,
+     %months, %at, %this_in, %next, %last, %day, %setyearday);
 
 {
     my $i = 1;
@@ -20,90 +21,90 @@ our (%data_weekdays, %data_months);
                                          Oktober November Dezember);
 }
 
-our %main = ('second'         => qr/^sekunde$/i,
-             'ago'            => qr/^her$/i,
-             'now'            => qr/^jetzt$/i,
-             'daytime'        => [qr/^(?:nachmittag|abend)$/i, qr/^Morgen$/],
-             'months'         => [qw(in diesem)],
-             'at_intro'       => qr/^(\d{1,2})(?!\d)(\:\d{2})?(am|pm)?|(mittag|mitternacht)$/i,
-             'at_matches'     => [qw(tag in monat)],
-             'number_intro'   => qr/^(\d{1,2})$/i,
-             'number_matches' => [qw(tag tage woche wochen monat monate Morgen abend jahr in)],
-             'weekdays'       => qr/^(?:diesen|nächsten|letzten)$/i,
-             'this_in'        => qr/^(?:diese(?:r|s|n)|in)$/i,
-             'next'           => qr/^nächste(?:r|s|n)$/i,
-             'last'           => qr/^letzte(?:r|s|n)?$/i,
-             );
+%main = ('second'         => qr/^sekunde$/i,
+         'ago'            => qr/^her$/i,
+         'now'            => qr/^jetzt$/i,
+         'daytime'        => [qr/^(?:nachmittag|abend)$/i, qr/^Morgen$/],
+         'months'         => [qw(in diesem)],
+         'at_intro'       => qr/^(\d{1,2})(?!\d)(\:\d{2})?(am|pm)?|(mittag|mitternacht)$/i,
+         'at_matches'     => [qw(tag in monat)],
+         'number_intro'   => qr/^(\d{1,2})$/i,
+         'number_matches' => [qw(tag tage woche wochen monat monate Morgen abend jahr in)],
+         'weekdays'       => qr/^(?:diesen|nächsten|letzten)$/i,
+         'this_in'        => qr/^(?:diese(?:r|s|n)|in)$/i,
+         'next'           => qr/^nächste(?:r|s|n)$/i,
+         'last'           => qr/^letzte(?:r|s|n)?$/i,
+         );
 
-our %ago = ('hour'  => qr/^stunde(?:n)?$/i,
-            'day'   => qr/^tag(?:e)?$/i,
-            'week'  => qr/^woche(?:n)?$/i,
-            'month' => qr/^monat(?:e)?$/i,
-            'year'  => qr/^jahr(?:e)?$/i,
-            );
+%ago = ('hour'  => qr/^stunde(?:n)?$/i,
+        'day'   => qr/^tag(?:e)?$/i,
+        'week'  => qr/^woche(?:n)?$/i,
+        'month' => qr/^monat(?:e)?$/i,
+        'year'  => qr/^jahr(?:e)?$/i,
+        );
 
-our %now = ('day'    => qr/^tag(?:e)?$/i,
-            'week'   => qr/^woche(?:n)?$/i,
-            'month'  => qr/^monat(?:e)?$/i,
-            'year'   => qr/^jahr(?:e)?$/i,
-            'before' => qr/^vor$/i,
-            'from'   => qr/^nach$/i,
-            );
+%now = ('day'    => qr/^tag(?:e)?$/i,
+        'week'   => qr/^woche(?:n)?$/i,
+        'month'  => qr/^monat(?:e)?$/i,
+        'year'   => qr/^jahr(?:e)?$/i,
+        'before' => qr/^vor$/i,
+        'from'   => qr/^nach$/i,
+        );
 
-our %daytime = ('tokens'     => [ qr/\d/, qr/^am$/i ],
-                'morning'    => qr/^Morgen$/,
-                'afternoon'  => qr/^nachmittag$/i,
-                'ago'        => qr/^her$/i,
-                );
-
-our %months = ('number' => qr/^(\d{1,2})$/i,
-               'hour'   => qr/stunde(?:n)/i,
-               'before' => qr/vor/i,
-               'after'  => qr/nach/i,
-               );
-
-our %at = ('noon'     => qr/mittag/i,
-           'midnight' => qr/mitternacht/i,
+%daytime = ('tokens'     => [ qr/\d/, qr/^am$/i ],
+            'morning'    => qr/^Morgen$/,
+            'afternoon'  => qr/^nachmittag$/i,
+            'ago'        => qr/^her$/i,
            );
 
-our %this_in = ('hour'   => qr/stunde(?:n)/i,
-                'week'   => qr/^woche(?:n)$/i,
-                'number' => qr/^(\d{1,2})/i,
-                );
+%months = ('number' => qr/^(\d{1,2})$/i,
+           'hour'   => qr/stunde(?:n)/i,
+           'before' => qr/vor/i,
+           'after'  => qr/nach/i,
+           );
 
-our %next = ('week'   => qr/^woche(?:n)?$/i,
-             'day'    => qr/^tag(?:e)?$/i,
-             'month'  => qr/^monat(?:e)?$/i,
-             'year'   => qr/^jahr(?:e)?$/i,
-             'number' => qr/^(\d{1,2})$/,
-             );
+%at = ('noon'     => qr/mittag/i,
+       'midnight' => qr/mitternacht/i,
+       );
 
-our %last = ('week'   => qr/^woche(?:n)?$/i,
-             'day'    => qr/^tag(?:e)?$/i,
-             'month'  => qr/^monat(?:e)?$/i,
-             'year'   => qr/^jahr(?:e)?$/i,
-             'number' => qr/^(\d{1,2})$/,
-             );
-
-our %day = ('init'           => qr/^(?:heute|gestern|morgen)$/i,
-            'morning_prefix' => qr/^(?:diese|nächste|letze)(?:r|s|n)$/i,
-            'yesterday'      => qr/gestern/i,
-            'tomorrow'       => qr/morgen/,
-            'noonmidnight'   => qr/^mittag|mitternacht$/i,
-            'at'             => qr/^am$/i,
-            'when'           => qr/^diesen|heute|gestern$/i,
+%this_in = ('hour'   => qr/stunde(?:n)/i,
+            'week'   => qr/^woche(?:n)$/i,
+            'number' => qr/^(\d{1,2})/i,
             );
 
-our %setyearday = ('day' => qr/^tag$/i,
-                   'ext' => qr/^(\d{1,3})$/,
-                  );
+%next = ('week'   => qr/^woche(?:n)?$/i,
+         'day'    => qr/^tag(?:e)?$/i,
+         'month'  => qr/^monat(?:e)?$/i,
+         'year'   => qr/^jahr(?:e)?$/i,
+         'number' => qr/^(\d{1,2})$/,
+         );
+
+%last = ('week'   => qr/^woche(?:n)?$/i,
+         'day'    => qr/^tag(?:e)?$/i,
+         'month'  => qr/^monat(?:e)?$/i,
+         'year'   => qr/^jahr(?:e)?$/i,
+         'number' => qr/^(\d{1,2})$/,
+         );
+
+%day = ('init'           => qr/^(?:heute|gestern|morgen)$/i,
+        'morning_prefix' => qr/^(?:diese|nächste|letze)(?:r|s|n)$/i,
+        'yesterday'      => qr/gestern/i,
+        'tomorrow'       => qr/morgen/,
+        'noonmidnight'   => qr/^mittag|mitternacht$/i,
+        'at'             => qr/^am$/i,
+        'when'           => qr/^diesen|heute|gestern$/i,
+        );
+
+%setyearday = ('day' => qr/^tag$/i,
+               'ext' => qr/^(\d{1,3})$/,
+              );
 
 1;
 __END__
 
 =head1 NAME
 
-DateTime::Format::Natural::Lang::DE - German translation metadata
+DateTime::Format::Natural::Lang::DE - German language metadata
 
 =head1 DESCRIPTION
 
@@ -164,7 +165,7 @@ Below are some examples of human readable date/time input in german:
 
 =head1 SEE ALSO
 
-L<DateTime::Format::Natural>, L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org/>
+L<DateTime::Format::Natural>, L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org>
 
 =head1 AUTHOR
 

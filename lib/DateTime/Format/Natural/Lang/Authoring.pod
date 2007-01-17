@@ -1,11 +1,11 @@
 =head1 NAME
 
-DateTime::Format::Natural::Lang::Authoring - Authoring the translation metadata
+DateTime::Format::Natural::Lang::Authoring - Authoring the language metadata
 
 =head1 DESCRIPTION
 
 Whenever a language is provided via the C<lang> parameter to 
-C<DateTime::Format::Natural's> C<parse_datetime>, C<parse_datetime>
+C<DateTime::Format::Natural's> constructor C<new>, C<parse_datetime>
 will subsequently use the I<translation metadata> found within, for example,
 C<DateTime::Format::Natural::Lang::EN>, if we chosen the english language.
 
@@ -22,9 +22,10 @@ The header should somehow resemble following piece of code:
  use warnings;
  use base qw(DateTime::Format::Natural::Lang::Base);
 
- our $VERSION = '0.5';
+ our $VERSION = '0.6';
 
- our (%data_weekdays, %data_months);
+ our (%data_weekdays, %data_months, %main, %ago, %now, %daytime, %months,
+      %number, %at, %this_in, %next, %last, %day, %setyearday);
 
 Substitute C<EN> with the appropriate language code. Use C<$VERSION = '0.1'>
 if it's a initial release, otherwise replace it with your custom version number.
@@ -161,7 +162,7 @@ Every package has to return a true value.
 
 =head1 SEE ALSO
 
-L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org/>
+L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org>
 
 =head1 AUTHOR
 

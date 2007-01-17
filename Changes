@@ -1,5 +1,20 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.24 Wed Jan 17 22:51:51 CET 2007
+
+ - Introduced a warning handler to silence the warnings about
+   undefined values when pattern matching, subtracting and
+   performing string comparisons in Natural/Base.pm.
+
+ - Merged the "frontend" scripts to a single one taking
+   optionally a language argument indicating the country
+   code among other arguments.
+
+ - Made 01-parse_en.t's & 02-parse_de.t's code more readable
+   by adding some more separating lines.
+
+ - Moved 'our' declarations in DE.pm & EN.pm towards the top.
+
 0.23 Tue Jan 16 19:51:50 CET 2007
 
  - The language metadata classes have an AUTOLOAD handler & __new

@@ -1,16 +1,16 @@
 package DateTime::Format::Natural::Base;
 
 use strict;
-no strict 'refs';
 use warnings;
-no warnings 'uninitialized';
 
 use DateTime;
 use Date::Calc qw(Add_Delta_Days Days_in_Month
                   Decode_Day_of_Week
                   Nth_Weekday_of_Month_Year);
 
-our $VERSION = '0.5';
+our $VERSION = '0.6';
+
+$SIG{__WARN__} = \&_filter_warnings;
 
 sub _ago {
     my $self = shift;
@@ -482,6 +482,13 @@ sub _setweekday {
     $self->_set_modified;
 }
 
+sub _filter_warnings {
+    if ($_[0] =~ /uninitialized/ &&
+        $_[0] =~ /pattern|string|subtraction/) {
+        return;
+    } else { print $_[0] }
+};
+
 1;
 __END__
 
@@ -500,7 +507,7 @@ C<DateTime::Format::Natural>.
 
 =head1 SEE ALSO
 
-L<DateTime::Format::Natural>, L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org/>
+L<DateTime::Format::Natural>, L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org>
 
 =head1 AUTHOR
 

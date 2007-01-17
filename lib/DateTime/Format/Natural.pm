@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use base qw(DateTime::Format::Natural::Base);
 
-our $VERSION = '0.23';
+our $VERSION = '0.23_01';
 
 sub new {
     my ($class, %opts) = @_;
@@ -27,10 +27,9 @@ sub parse_datetime {
     my ($DEBUG, $date_string, %opts);
 
     if (@_ > 1) {
-        %opts           = @_;
-        $date_string    = $opts{string};
-        $DEBUG          = $opts{debug};
-        $self->{lang} ||= $opts{lang};
+        %opts        = @_;
+        $date_string = $opts{string};
+        $DEBUG       = $opts{debug};
     } else {
         ($date_string) = @_;
     }
@@ -267,7 +266,7 @@ Creates a C<DateTime> object from a human readable date/time string.
 
  $dt = $parse->parse_datetime(string => $date_string, debug => 1);
 
-The options may contain the keys C<string>, & C<debug>. C<string> may consist of the
+The options may contain the keys C<string> & C<debug>. C<string> may consist of the
 datestring, whereas C<debug> holds the boolean value for the debugging option. If
 debugging is enabled, each token that is analysed will be output to STDOUT with a
 trailing newline appended.
@@ -286,7 +285,7 @@ See the modules C<DateTime::Format::Natural::Lang::*> for a overview of valid in
 
 =head1 SEE ALSO
 
-L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org/>
+L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org>
 
 =head1 AUTHOR
 

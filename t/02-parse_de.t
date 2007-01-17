@@ -6,7 +6,7 @@ use warnings;
 use DateTime::Format::Natural;
 use Test::More tests => 38;
 
-my ($min, $hour, $day, $month, $year) = qw(13 01 24 11 2006);
+my ($min, $hour, $day, $month, $year) = (13,01,24,11,2006);
 
 my %simple = ('Donnerstag'               => '23.11.2006 01:13',
               'November'                 => '24.11.2006 01:13',
@@ -55,9 +55,9 @@ compare(\%complex);
 compare(\%specific);
 
 sub compare {
-    my $hashref = shift;
-    foreach my $key (sort keys %$hashref) {
-        compare_strings($key, $hashref->{$key});
+    my $href = shift;
+    foreach my $key (sort keys %$href) {
+        compare_strings($key, $href->{$key});
     }
 }
 
@@ -66,7 +66,9 @@ sub compare_strings {
 
     my $parse = DateTime::Format::Natural->new(lang => 'de');
     $parse->_set_datetime($year, $month, $day, $hour, $min);
+
     my $dt = $parse->parse_datetime(string => $string);
     my $res_string = sprintf("%02s.%02s.%4s %02s:%02s", $dt->day, $dt->month, $dt->year, $dt->hour, $dt->min);
+
     is($res_string, $result, $string);
 }
