@@ -14,7 +14,7 @@ DESCRIPTION
     which takes a string with a human readable date/time and creates a
     machine readable one by applying natural parsing logic.
 
-FUNCTIONS
+METHODS
   new
     Creates a new DateTime::Format::Natural object.
 
@@ -41,7 +41,7 @@ FUNCTIONS
     Returns a "DateTime" object.
 
   format_datetime
-    Not implemented yet.
+    Currently not implemented.
 
 EXAMPLES
     See the modules "DateTime::Format::Natural::Lang::*" for a overview of
