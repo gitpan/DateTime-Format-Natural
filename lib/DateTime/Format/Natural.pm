@@ -2,11 +2,12 @@ package DateTime::Format::Natural;
 
 use strict;
 use warnings;
+no warnings 'uninitialized';
 use base qw(DateTime::Format::Natural::Base);
 
 use List::MoreUtils qw(any none);
 
-our $VERSION = '0.30';
+our $VERSION = '0.31';
 
 sub new {
     my $class = shift;
@@ -25,8 +26,6 @@ sub _init {
 
     eval "use $mod";
     die $@ if $@;
-
-    my $obj = {};
 
     $self->{data}          = $mod->__new();
     $self->{format}        = $opts{format} || 'd/m/y';
@@ -50,7 +49,7 @@ sub parse_datetime {
     }
 
     unless ($self->{nodatetimeset}) {
-        $self->{datetime} = DateTime->now(time_zone => 'local');
+        $self->{datetime} = DateTime->now(time_zone => 'floating');
     }
 
     $self->_flush_datetime_objects;
@@ -356,7 +355,7 @@ sub _get_datetime_objects {
 sub _set_datetime {
     my ($self, $year, $month, $day, $hour, $min, $sec) = @_;
 
-    $self->{datetime} = DateTime->now(time_zone => 'local');
+    $self->{datetime} = DateTime->now(time_zone => 'floating');
 
     $self->{nodatetimeset} = 1;
 
@@ -400,7 +399,7 @@ not necessarily required.
            format  => 'mm/dd/yy',
            daytime => { morning   => 06,
                         afternoon => 13,
-                        evening   => 20 
+                        evening   => 20,
                       },
  );
 
