@@ -15,6 +15,7 @@ my $build = Module::Build->new
                  'Carp' => 0,
                  'DateTime' => 0,
                  'Exporter' => 0,
+                 'Getopt::Long' => 0,
                  'List::MoreUtils' => 0,
                  'Params::Validate' => 0,
                  'Scalar::Util' => 0,

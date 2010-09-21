@@ -11,6 +11,7 @@ WriteMakefile
           'VERSION_FROM' => 'lib/DateTime/Format/Natural.pm',
           'PREREQ_PM' => {
                            'Scalar::Util' => 0,
+                           'Getopt::Long' => 0,
                            'DateTime' => 0,
                            'Test::MockTime' => 0,
                            'Storable' => 0,

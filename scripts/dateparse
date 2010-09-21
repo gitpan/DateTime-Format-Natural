@@ -113,7 +113,7 @@ sub process
 Commands
  ?, help                this help screen
  exit, q, quit          leave dateparse
- everything else        datetime string
+ everything else        input string
 
 EOT
             next;
