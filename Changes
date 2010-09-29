@@ -1,5 +1,11 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.89_02  2010-09-29  <schubiger@cpan.org>
+
+ - Create the metadata package name string through joining it.
+
+ - Provide a generated list of values to _Day_of_Week().
+
 0.89_01  2010-09-21  <schubiger@cpan.org>
 
  - Reword dateparse's help screen to be more descriptive.

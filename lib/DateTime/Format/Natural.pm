@@ -18,7 +18,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '0.89_01';
+our $VERSION = '0.89_02';
 
 validation_options(
     on_fail => sub
@@ -63,7 +63,7 @@ sub _init
     }
     $self->{Daytime} = $opts{daytime} || {};
 
-    my $mod = __PACKAGE__.'::Lang::'.uc($self->{Lang});
+    my $mod = join '::', (__PACKAGE__, 'Lang', uc $self->{Lang});
     eval "require $mod"; die $@ if $@;
 
     $self->{data} = $mod->__new();
@@ -448,7 +448,7 @@ sub _advance_future
     }
     elsif ($token_contains->('weekdays_all')
         && (exists $self->{modified}{day} && $self->{modified}{day} == 1)
-        && ($self->_Day_of_Week($self->{datetime}->year, $self->{datetime}->month, $self->{datetime}->day)
+        && ($self->_Day_of_Week(map $self->{datetime}->$_, qw(year month day))
          < DateTime->now(time_zone => $self->{Time_zone})->wday)
     ) {
         $self->{postprocess}{day} = 7;
