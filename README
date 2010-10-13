@@ -83,7 +83,7 @@ METHODS
 
   parse_datetime_duration
 
-    Returns one or more DateTime object(s) constructed from a human readable
+    Returns one or more DateTime objects constructed from a human readable
     date/time string which may contain timespans/durations. *Same* interface
     and options as `parse_datetime()', but should be explicitly called in
     list context.
@@ -103,7 +103,7 @@ METHODS
   trace
 
     Returns one or more strings with traces of methods which were called
-    within the Base class and a summary how often certain units have been
+    within the Calc class and a summary how often certain units have been
     modified. More than one string is commonly returned for durations.
 
 GRAMMAR
@@ -115,8 +115,8 @@ GRAMMAR
     you're intending to hack a bit on the grammar guts.
 
 EXAMPLES
-    See the classes `DateTime::Format::Natural::Lang::[language_code]' for a
-    overview of currently valid input.
+    See the classes `DateTime::Format::Natural::Lang::[language_code]' for
+    an overview of currently valid input.
 
 BUGS & CAVEATS
     `parse_datetime()'/`parse_datetime_duration()' always return one or more

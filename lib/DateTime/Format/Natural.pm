@@ -18,7 +18,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '0.90';
+our $VERSION = '0.90_01';
 
 validation_options(
     on_fail => sub
@@ -633,7 +633,7 @@ The date string.
 
 =head2 parse_datetime_duration
 
-Returns one or more L<DateTime> object(s) constructed from a human readable
+Returns one or more L<DateTime> objects constructed from a human readable
 date/time string which may contain timespans/durations. I<Same> interface
 and options as C<parse_datetime()>, but should be explicitly called in
 list context.
@@ -653,7 +653,7 @@ Returns the error message if the parsing did not succeed.
 =head2 trace
 
 Returns one or more strings with traces of methods which were called within
-the Base class and a summary how often certain units have been modified.
+the Calc class and a summary how often certain units have been modified.
 More than one string is commonly returned for durations.
 
 =head1 GRAMMAR
@@ -666,7 +666,7 @@ you're intending to hack a bit on the grammar guts.
 
 =head1 EXAMPLES
 
-See the classes C<DateTime::Format::Natural::Lang::[language_code]> for a
+See the classes C<DateTime::Format::Natural::Lang::[language_code]> for an
 overview of currently valid input.
 
 =head1 BUGS & CAVEATS

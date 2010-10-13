@@ -1,5 +1,13 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.90_01  2010-10-13  <schubiger@cpan.org>
+
+ - Fix reference to the Calc class in the documentation of trace().
+
+ - Adjust phrasing of parse_datetime_duration()'s documentation.
+
+ - Correct spelling of the examples description.
+
 0.90  2010-10-04  <schubiger@cpan.org>
 
  - Merged development version to stable.
