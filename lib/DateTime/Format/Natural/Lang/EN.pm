@@ -10,7 +10,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.38';
+our $VERSION = '1.39';
 
 our (%init,
      %timespan,
@@ -1036,6 +1036,321 @@ our (%init,
          ],
          [ {}, {} ],
          [ '_at', '_count_day_variant_week' ],
+         { truncate_to => 'minute' },
+       ],
+    ],
+    am_pm_variant_weekday => [
+       [ 'REGEXP', 'SCALAR', 'REGEXP', 'REGEXP' ],
+       [
+         { 0 => $RE{time}, 1 => 'am', 2 => qr/^(last)$/i, 3 => $RE{weekday} },
+         [ [ 0 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{time_am} ] },
+           ],
+           [
+             { 2 => [ $flag{last_this_next} ] },
+             { 3 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_at', '_count_day_variant_week' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => $RE{time}, 1 => 'am', 2 => qr/^(this)$/i, 3 => $RE{weekday} },
+         [ [ 0 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{time_am} ] },
+           ],
+           [
+             { 2 => [ $flag{last_this_next} ] },
+             { 3 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_at', '_count_day_variant_week' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => $RE{time}, 1 => 'am', 2 => qr/^(next)$/i, 3 => $RE{weekday} },
+         [ [ 0 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{time_am} ] },
+           ],
+           [
+             { 2 => [ $flag{last_this_next} ] },
+             { 3 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_at', '_count_day_variant_week' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => $RE{time}, 1 => 'pm', 2 => qr/^(last)$/i, 3 => $RE{weekday} },
+         [ [ 0 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{time_pm} ] },
+           ],
+           [
+             { 2 => [ $flag{last_this_next} ] },
+             { 3 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_at', '_count_day_variant_week' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => $RE{time}, 1 => 'pm', 2 => qr/^(this)$/i, 3 => $RE{weekday} },
+         [ [ 0 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{time_pm} ] },
+           ],
+           [
+             { 2 => [ $flag{last_this_next} ] },
+             { 3 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_at', '_count_day_variant_week' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => $RE{time}, 1 => 'pm', 2 => qr/^(next)$/i, 3 => $RE{weekday} },
+         [ [ 0 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{time_pm} ] },
+           ],
+           [
+             { 2 => [ $flag{last_this_next} ] },
+             { 3 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_at', '_count_day_variant_week' ],
+         { truncate_to => 'minute' },
+       ],
+    ],
+    variant_weekday_at => [
+       [ 'REGEXP', 'REGEXP', 'REGEXP' ],
+       [
+         { 0 => qr/^(last)$/i, 1 => $RE{weekday}, 2 => $RE{time_am} },
+         [ [ 2 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{last_this_next} ] },
+             { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_am} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_count_day_variant_week', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => qr/^(this)$/i, 1 => $RE{weekday}, 2 => $RE{time_am} },
+         [ [ 2 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{last_this_next} ] },
+             { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_am} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_count_day_variant_week', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => qr/^(next)$/i, 1 => $RE{weekday}, 2 => $RE{time_am} },
+         [ [ 2 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{last_this_next} ] },
+             { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_am} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_count_day_variant_week', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => qr/^(last)$/i, 1 => $RE{weekday}, 2 => $RE{time_pm} },
+         [ [ 2 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{last_this_next} ] },
+             { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_pm} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_count_day_variant_week', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => qr/^(this)$/i, 1 => $RE{weekday}, 2 => $RE{time_pm} },
+         [ [ 2 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{last_this_next} ] },
+             { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_pm} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_count_day_variant_week', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => qr/^(next)$/i, 1 => $RE{weekday}, 2 => $RE{time_pm} },
+         [ [ 2 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{last_this_next} ] },
+             { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_pm} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_count_day_variant_week', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+    ],
+    variant_weekday_am_pm => [
+       [ 'REGEXP', 'REGEXP', 'REGEXP', 'SCALAR' ],
+       [
+         { 0 => qr/^(last)$/i, 1 => $RE{weekday}, 2 => $RE{time}, 3 => 'am' },
+         [ [ 2 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{last_this_next} ] },
+             { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_am} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_count_day_variant_week', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => qr/^(this)$/i, 1 => $RE{weekday}, 2 => $RE{time}, 3 => 'am' },
+         [ [ 2 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{last_this_next} ] },
+             { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_am} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_count_day_variant_week', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => qr/^(next)$/i, 1 => $RE{weekday}, 2 => $RE{time}, 3 => 'am' },
+         [ [ 2 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{last_this_next} ] },
+             { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_am} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_count_day_variant_week', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => qr/^(last)$/i, 1 => $RE{weekday}, 2 => $RE{time}, 3 => 'pm' },
+         [ [ 2 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{last_this_next} ] },
+             { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_pm} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_count_day_variant_week', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => qr/^(this)$/i, 1 => $RE{weekday}, 2 => $RE{time}, 3 => 'pm' },
+         [ [ 2 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{last_this_next} ] },
+             { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_pm} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_count_day_variant_week', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => qr/^(next)$/i, 1 => $RE{weekday}, 2 => $RE{time}, 3 => 'pm' },
+         [ [ 2 ] ],
+         [ $extended_checks{meridiem} ],
+         [
+           [
+             { 0 => [ $flag{last_this_next} ] },
+             { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_pm} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_count_day_variant_week', '_at' ],
          { truncate_to => 'minute' },
        ],
     ],
@@ -4145,6 +4460,24 @@ that the parser does not distinguish between lower/upper case):
  1pm last friday
  1pm this friday
  1pm next friday
+ 5 am last monday
+ 5 am this monday
+ 5 am next monday
+ 5 pm last monday
+ 5 pm this monday
+ 5 pm next monday
+ last wednesday 7am
+ this wednesday 7am
+ next wednesday 7am
+ last wednesday 7pm
+ this wednesday 7pm
+ next wednesday 7pm
+ last tuesday 11 am
+ this tuesday 11 am
+ next tuesday 11 am
+ last tuesday 11 pm
+ this tuesday 11 pm
+ next tuesday 11 pm
  yesterday at 13:00
  today at 13:00
  tomorrow at 13

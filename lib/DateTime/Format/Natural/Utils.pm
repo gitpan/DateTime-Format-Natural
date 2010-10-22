@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use boolean qw(true false);
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 sub _valid_date
 {
@@ -56,17 +56,18 @@ sub _trace_string
 {
     my $self = shift;
 
-    my ($trace, $modified) = map $self->{$_}, qw(trace modified);
+    my ($trace, $modified, $keyword) = map $self->{$_}, qw(trace modified keyword);
 
     $trace    ||= [];
     $modified ||= {};
+    $keyword  ||= '';
 
-    return undef unless (@$trace || %$modified);
+    return undef unless (@$trace || %$modified || length $keyword);
 
     my $i;
     my %order = map { $_ => $i++ } @{$self->{data}->__units('ordered')};
 
-    return join "\n", @$trace,
+    return join "\n", grep length, $keyword, @$trace,
       map { my $unit = $_; "$unit: $modified->{$unit}" }
       sort { $order{$a} <=> $order{$b} }
       keys %$modified;

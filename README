@@ -102,9 +102,11 @@ METHODS
 
   trace
 
-    Returns one or more strings with traces of methods which were called
-    within the Calc class and a summary how often certain units have been
-    modified. More than one string is commonly returned for durations.
+    Returns one or more strings with the grammar keyword for the valid
+    expression parsed, traces of methods which were called within the Calc
+    class and a summary how often certain units have been modified. More
+    than one string is commonly returned for durations. Useful as a
+    debugging aid.
 
 GRAMMAR
     The grammar handling has been rewritten to be easily extendable and
@@ -163,6 +165,7 @@ CREDITS
      Eric Wilhelm
      Kevin Field
      Wes Morgan
+     Vladimir Marek
 
 SEE ALSO
     DateTime, Date::Calc, http://datetime.perl.org

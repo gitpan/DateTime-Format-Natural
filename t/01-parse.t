@@ -227,6 +227,24 @@ my @complex = (
     { '1pm last friday'                 => '17.11.2006 13:00:00' },
     { '1pm this friday'                 => '24.11.2006 13:00:00' },
     { '1pm next friday'                 => '01.12.2006 13:00:00' },
+    { '5 am last monday'                => '13.11.2006 05:00:00' },
+    { '5 am this monday'                => '20.11.2006 05:00:00' },
+    { '5 am next monday'                => '27.11.2006 05:00:00' },
+    { '5 pm last monday'                => '13.11.2006 17:00:00' },
+    { '5 pm this monday'                => '20.11.2006 17:00:00' },
+    { '5 pm next monday'                => '27.11.2006 17:00:00' },
+    { 'last wednesday 7am'              => '15.11.2006 07:00:00' },
+    { 'this wednesday 7am'              => '22.11.2006 07:00:00' },
+    { 'next wednesday 7am'              => '29.11.2006 07:00:00' },
+    { 'last wednesday 7pm'              => '15.11.2006 19:00:00' },
+    { 'this wednesday 7pm'              => '22.11.2006 19:00:00' },
+    { 'next wednesday 7pm'              => '29.11.2006 19:00:00' },
+    { 'last tuesday 11 am'              => '14.11.2006 11:00:00' },
+    { 'this tuesday 11 am'              => '21.11.2006 11:00:00' },
+    { 'next tuesday 11 am'              => '28.11.2006 11:00:00' },
+    { 'last tuesday 11 pm'              => '14.11.2006 23:00:00' },
+    { 'this tuesday 11 pm'              => '21.11.2006 23:00:00' },
+    { 'next tuesday 11 pm'              => '28.11.2006 23:00:00' },
     { 'yesterday at 13:00'              => '23.11.2006 13:00:00' },
     { 'today at 13:00'                  => '24.11.2006 13:00:00' },
     { 'tomorrow at 13'                  => '25.11.2006 13:00:00' },
@@ -272,7 +290,7 @@ my @specific = (
     { '+2d'               => '26.11.2006 01:13:08' },
 );
 
-_run_tests(255, [ [ \@simple ], [ \@complex ], [ \@specific ] ], \&compare);
+_run_tests(273, [ [ \@simple ], [ \@complex ], [ \@specific ] ], \&compare);
 
 sub compare
 {

@@ -18,7 +18,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '0.90_01';
+our $VERSION = '0.90_02';
 
 validation_options(
     on_fail => sub
@@ -123,7 +123,7 @@ sub _init_vars
 {
     my $self = shift;
 
-    delete @$self{qw(modified postprocess)};
+    delete @$self{qw(keyword modified postprocess)};
 }
 
 sub parse_datetime
@@ -397,6 +397,7 @@ sub _process
                     $self->$worker(@values, $expression->[4]->[$i++]);
                 }
                 %opts = %{$expression->[6]};
+                $self->{keyword} = $keyword;
                 last PARSE;
             }
         }
@@ -652,9 +653,10 @@ Returns the error message if the parsing did not succeed.
 
 =head2 trace
 
-Returns one or more strings with traces of methods which were called within
-the Calc class and a summary how often certain units have been modified.
-More than one string is commonly returned for durations.
+Returns one or more strings with the grammar keyword for the valid
+expression parsed, traces of methods which were called within the Calc
+class and a summary how often certain units have been modified. More than
+one string is commonly returned for durations. Useful as a debugging aid.
 
 =head1 GRAMMAR
 
@@ -715,6 +717,7 @@ valuable suggestions and patches:
  Eric Wilhelm
  Kevin Field
  Wes Morgan
+ Vladimir Marek
 
 =head1 SEE ALSO
 

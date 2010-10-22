@@ -1,5 +1,20 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.90_02  2010-10-22  <schubiger@cpan.org>
+
+ - New supported formats: <variant> <weekday> <time> AM/PM and
+   <time> AM/PM <variant> <weekday>. [rt #62164 - Vladimir Marek]
+
+ - Add support for the <variant> <weekday> <time am/pm> format.
+
+ - Test and document the new formats.
+
+ - Record the grammar keyword for each valid expression parsed.
+
+ - Describe trace()'s purpose and its inclusion of a grammar keyword.
+
+ - Insert expected grammar keywords in 14-trace.t.
+
 0.90_01  2010-10-13  <schubiger@cpan.org>
 
  - Fix reference to the Calc class in the documentation of trace().
