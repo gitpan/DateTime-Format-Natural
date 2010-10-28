@@ -10,7 +10,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.39';
+our $VERSION = '1.40';
 
 our (%init,
      %timespan,
@@ -1452,6 +1452,132 @@ our (%init,
            [
                1,
              { 0 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_pm} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_month_day', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+    ],
+    month_day_am_pm => [
+       [ 'REGEXP', 'REGEXP', 'REGEXP', 'SCALAR' ],
+       [
+         { 0 => $RE{month}, 1 => $RE{monthday}, 2 => $RE{time}, 3 => 'am' },
+         [ [ 1 ], [ 2 ] ],
+         [ $extended_checks{ordinal}, $extended_checks{meridiem} ],
+         [
+           [
+               1,
+             { 0 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_am} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_month_day', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => $RE{month}, 1 => $RE{monthday}, 2 => $RE{time}, 3 => 'pm' },
+         [ [ 1 ], [ 2 ] ],
+         [ $extended_checks{ordinal}, $extended_checks{meridiem} ],
+         [
+           [
+               1,
+             { 0 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_pm} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_month_day', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+    ],
+    day_month_at => [
+       [ 'REGEXP', 'REGEXP', 'REGEXP' ],
+       [
+         { 0 => $RE{monthday}, 1 => $RE{month}, 2 => $RE{time} },
+         [ [ 0 ] ],
+         [ $extended_checks{ordinal} ],
+         [
+           [
+               0,
+             { 1 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+           [ 2 ],
+         ],
+         [ {}, {} ],
+         [ '_month_day', '_time' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => $RE{monthday}, 1 => $RE{month}, 2 => $RE{time_am} },
+         [ [ 0 ], [ 2 ] ],
+         [ $extended_checks{ordinal}, $extended_checks{meridiem} ],
+         [
+           [
+               0,
+             { 1 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_am} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_month_day', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => $RE{monthday}, 1 => $RE{month}, 2 => $RE{time_pm} },
+         [ [ 0 ], [ 2 ] ],
+         [ $extended_checks{ordinal}, $extended_checks{meridiem} ],
+         [
+           [
+               0,
+             { 1 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_pm} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_month_day', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+    ],
+    day_month_am_pm => [
+       [ 'REGEXP', 'REGEXP', 'REGEXP', 'SCALAR' ],
+       [
+         { 0 => $RE{monthday}, 1 => $RE{month}, 2 => $RE{time}, 3 => 'am' },
+         [ [ 0 ], [ 2 ] ],
+         [ $extended_checks{ordinal}, $extended_checks{meridiem} ],
+         [
+           [
+               0,
+             { 1 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+           [
+             { 2 => [ $flag{time_am} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_month_day', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => $RE{monthday}, 1 => $RE{month}, 2 => $RE{time}, 3 => 'pm' },
+         [ [ 0 ], [ 2 ] ],
+         [ $extended_checks{ordinal}, $extended_checks{meridiem} ],
+         [
+           [
+               0,
+             { 1 => [ $flag{month_name}, $flag{month_num} ] },
            ],
            [
              { 2 => [ $flag{time_pm} ] },
@@ -4525,10 +4651,17 @@ that the parser does not distinguish between lower/upper case):
  march
  january 11
  11 january
+ 18 oct 17:00
+ 18 oct 5am
+ 18 oct 5pm
+ 18 oct 5 am
+ 18 oct 5 pm
  dec 25
  feb 28 3:00
  feb 28 3am
  feb 28 3pm
+ feb 28 3 am
+ feb 28 3 pm
  may 27th
  2005
  march 1st 2009
