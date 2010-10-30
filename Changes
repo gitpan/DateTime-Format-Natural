@@ -1,5 +1,14 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.90_04  2010-10-30  <schubiger@cpan.org>
+
+ - New supported formats: <time> <month> <monthday> and
+   <time> AM/PM <month> <monthday>. [rt #62164 - Vladimir Marek]
+
+ - Add support for the <time am/pm> <month> <monthday> format.
+
+ - Test and document the new formats.
+
 0.90_03  2010-10-28  <schubiger@cpan.org>
 
  - New supported formats: <monthday> <month> <time>,

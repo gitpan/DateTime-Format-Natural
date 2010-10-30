@@ -10,7 +10,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.40';
+our $VERSION = '1.41';
 
 our (%init,
      %timespan,
@@ -1585,6 +1585,95 @@ our (%init,
          ],
          [ {}, {} ],
          [ '_month_day', '_at' ],
+         { truncate_to => 'minute' },
+       ],
+    ],
+    at_month_day => [
+       [ 'REGEXP', 'REGEXP', 'REGEXP' ],
+       [
+         { 0 => $RE{time}, 1 => $RE{month}, 2 => $RE{monthday} },
+         [ [ 2 ] ],
+         [ $extended_checks{ordinal} ],
+         [
+           [ 0 ],
+           [
+               2,
+             { 1 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_time', '_month_day' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => $RE{time_am}, 1 => $RE{month}, 2 => $RE{monthday} },
+         [ [ 0 ], [ 2 ] ],
+         [ $extended_checks{meridiem}, $extended_checks{ordinal} ],
+         [
+           [
+             { 0 => [ $flag{time_am} ] },
+           ],
+           [
+               2,
+             { 1 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_at', '_month_day' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => $RE{time_pm}, 1 => $RE{month}, 2 => $RE{monthday} },
+         [ [ 0 ], [ 2 ] ],
+         [ $extended_checks{meridiem}, $extended_checks{ordinal} ],
+         [
+           [
+             { 0 => [ $flag{time_pm} ] },
+           ],
+           [
+               2,
+             { 1 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_at', '_month_day' ],
+         { truncate_to => 'minute' },
+       ],
+    ],
+    am_pm_month_day => [
+       [ 'REGEXP', 'SCALAR', 'REGEXP', 'REGEXP' ],
+       [
+         { 0 => $RE{time}, 1 => 'am', 2 => $RE{month}, 3 => $RE{monthday} },
+         [ [ 0 ], [ 3 ] ],
+         [ $extended_checks{meridiem}, $extended_checks{ordinal} ],
+         [
+           [
+             { 0 => [ $flag{time_am} ] },
+           ],
+           [
+               3,
+             { 2 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_at', '_month_day' ],
+         { truncate_to => 'minute' },
+       ],
+       [
+         { 0 => $RE{time}, 1 => 'pm', 2 => $RE{month}, 3 => $RE{monthday} },
+         [ [ 0 ], [ 3 ] ],
+         [ $extended_checks{meridiem}, $extended_checks{ordinal} ],
+         [
+           [
+             { 0 => [ $flag{time_pm} ] },
+           ],
+           [
+               3,
+             { 2 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_at', '_month_day' ],
          { truncate_to => 'minute' },
        ],
     ],
@@ -4662,6 +4751,11 @@ that the parser does not distinguish between lower/upper case):
  feb 28 3pm
  feb 28 3 am
  feb 28 3 pm
+ 19:00 jul 1
+ 7am jul 1
+ 7pm jul 1
+ 7 am jul 1
+ 7 pm jul 1
  may 27th
  2005
  march 1st 2009
