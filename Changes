@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.91  2010-11-01  <schubiger@cpan.org>
+
+ - Merged development version to stable.
+
 0.90_04  2010-10-30  <schubiger@cpan.org>
 
  - New supported formats: <time> <month> <monthday> and
