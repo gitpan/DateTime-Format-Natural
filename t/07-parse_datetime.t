@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use DateTime::Format::Natural;
-use DateTime::Format::Natural::Test;
+use DateTime::Format::Natural::Test ':set';
 use Test::More;
 
 my @simple = (

@@ -10,7 +10,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.41';
+our $VERSION = '1.42';
 
 our (%init,
      %timespan,
@@ -40,6 +40,7 @@ our (%init,
        time      => qr/^((?:\d{1,2})(?:\:\d{2})?)$/,
        time_am   => qr/^((?:\d{1,2})(?:\:\d{2})?)am$/i,
        time_pm   => qr/^((?:\d{1,2})(?:\:\d{2})?)pm$/i,
+       time_min  => qr/^(\d{1,2}\:\d{2})$/,
        time_full => qr/^(\d{1,2}\:\d{2}\:\d{2})$/,
        day       => qr/^(\d+)($suffixes{ordinal})?$/i,
        monthday  => qr/^(\d{1,2})($suffixes{ordinal})?$/i);
@@ -91,26 +92,36 @@ our (%init,
     );
 
     %data_duration = (
-        for => sub {
-            my ($date_strings) = @_;
-            return (@$date_strings == 1
-                && $date_strings->[0] =~ /^for \s+/ix);
+        for => {
+            regex   => qr/^for \s+ .+$/ix,
+            present => 'now',
         },
-        first_to_last => sub {
-            my ($date_strings) = @_;
-            return (@$date_strings == 2
-                && $date_strings->[0] =~ /^first$/i
-                && $date_strings->[1] =~ /^last \s+/ix);
+        first_to_last => {
+            regexes => {
+                first   => qr/^first$/i,
+                last    => qr/^last \s+ .+$/ix,
+                extract => qr/^\S+? \s+ (.+)$/x,
+            },
         },
-        date_time_to_time => sub {
-            my ($date_strings) = @_;
-
-            my $date = qr!(?:\d{1,4}) (?:[-./]\d{1,4}){0,2}!x;
-            my $time = qr!(?:\d{1,2}) (?:\:\d{2}){0,2}!x;
-
-            return (@$date_strings == 2
-                && $date_strings->[0] =~ /^$date \s+ $time$/x
-                && $date_strings->[1] =~ /^$time$/);
+        from_count_to_count => {
+            regexes => {
+                time_meridiem => qr/\d{1,2}(?:\:\d{2}){0,2}(?:\s*?(?:am|pm))/i,
+                time          => qr/\d{1,2}(?:\:\d{2}){1,2}/,
+                day_ordinal   => qr/\d{1,3}(?:$suffixes{ordinal})/i,
+                day           => qr/\d{1,3}/,
+            },
+            order => [qw(
+                time_meridiem
+                time
+                day_ordinal
+                day
+            )],
+            categories => {
+                time_meridiem => 'time',
+                time          => 'time',
+                day_ordinal   => 'day',
+                day           => 'day',
+            },
         },
     );
 
@@ -1413,7 +1424,7 @@ our (%init,
     month_day_at => [
        [ 'REGEXP', 'REGEXP', 'REGEXP' ],
        [
-         { 0 => $RE{month}, 1 => $RE{monthday}, 2 => $RE{time} },
+         { 0 => $RE{month}, 1 => $RE{monthday}, 2 => $RE{time_min} },
          [ [ 1 ] ],
          [ $extended_checks{ordinal} ],
          [
@@ -1502,7 +1513,7 @@ our (%init,
     day_month_at => [
        [ 'REGEXP', 'REGEXP', 'REGEXP' ],
        [
-         { 0 => $RE{monthday}, 1 => $RE{month}, 2 => $RE{time} },
+         { 0 => $RE{monthday}, 1 => $RE{month}, 2 => $RE{time_min} },
          [ [ 0 ] ],
          [ $extended_checks{ordinal} ],
          [
@@ -1591,7 +1602,7 @@ our (%init,
     at_month_day => [
        [ 'REGEXP', 'REGEXP', 'REGEXP' ],
        [
-         { 0 => $RE{time}, 1 => $RE{month}, 2 => $RE{monthday} },
+         { 0 => $RE{time_min}, 1 => $RE{month}, 2 => $RE{monthday} },
          [ [ 2 ] ],
          [ $extended_checks{ordinal} ],
          [
@@ -4720,6 +4731,12 @@ that the parser does not distinguish between lower/upper case):
  1999-12-31 to tomorrow
  now to 2010-01-01
  2009-03-10 9:00 to 11:00
+ 26 oct 10:00 am to 11:00 am
+ jan 1 to 2
+ 16:00 nov 6 to 17:00
+ may 2nd to 5th
+ 100th day to 200th
+ 6am dec 5 to 7am
  1/3 to 2/3
  2/3 to in 1 week
  3/3 21:00 to in 5 days

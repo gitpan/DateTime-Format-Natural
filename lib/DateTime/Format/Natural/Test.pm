@@ -5,13 +5,20 @@ use warnings;
 use base qw(Exporter);
 use boolean qw(true);
 
+use File::Find;
+use File::Spec::Functions qw(abs2rel);
+use List::MoreUtils qw(any);
+use Module::Util qw(fs_path_to_module);
 use Test::More;
 
-our ($VERSION, @EXPORT, %time, $case_strings);
+our ($VERSION, @EXPORT_OK, %EXPORT_TAGS, %time, $case_strings);
+my @set;
 
-$VERSION = '0.05';
+$VERSION = '0.06';
 
-@EXPORT = qw(%time $case_strings _run_tests _result_string _message);
+@set         =  qw(%time $case_strings _run_tests _result_string _message);
+@EXPORT_OK   = (qw(_find_modules _find_files), @set);
+%EXPORT_TAGS = ('set' => [ @set ]);
 
 %time = map { split /:/ }
         split /\n/,
@@ -68,6 +75,39 @@ sub _message
       : '(using Date::Calc)';
 
     return "$msg $how";
+}
+
+sub _find_modules
+{
+    my ($lib, $modules, $exclude) = @_;
+    _gather_data($lib, undef, $modules, $exclude);
+}
+
+sub _find_files
+{
+    my ($lib, $files, $exclude) = @_;
+    _gather_data($lib, $files, undef, $exclude);
+}
+
+sub _gather_data
+{
+    my ($lib, $files, $modules, $exclude) = @_;
+
+    my ($save_files, $save_modules) = map defined, ($files, $modules);
+    my $ext = qr/\.pm$/;
+
+    find(sub {
+        return unless $_ =~ $ext;
+        my $rel_path = abs2rel($File::Find::name, $lib);
+        my $module = fs_path_to_module($rel_path) or return;
+        return if any { $module =~ /${_}$/ } @$exclude;
+        if ($save_files) {
+            push @$files, $File::Find::name;
+        }
+        elsif ($save_modules) {
+            push @$modules, $module;
+        }
+    }, $lib);
 }
 
 1;

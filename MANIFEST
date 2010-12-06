@@ -6,6 +6,7 @@ lib/DateTime/Format/Natural/Aliases.pm
 lib/DateTime/Format/Natural/Calc.pm
 lib/DateTime/Format/Natural/Compat.pm
 lib/DateTime/Format/Natural/Duration.pm
+lib/DateTime/Format/Natural/Duration/Checks.pm
 lib/DateTime/Format/Natural/Formatted.pm
 lib/DateTime/Format/Natural/Helpers.pm
 lib/DateTime/Format/Natural/Lang/Base.pm

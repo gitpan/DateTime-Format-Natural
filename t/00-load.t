@@ -3,23 +3,17 @@
 use strict;
 use warnings;
 
-use Test::More tests => 12;
+use Cwd qw(realpath);
+use DateTime::Format::Natural::Test qw(_find_modules);
+use File::Spec::Functions qw(catfile updir);
+use FindBin qw($Bin);
+use Test::More;
 
 BEGIN
 {
-    my @modules = qw(
-        DateTime::Format::Natural
-        DateTime::Format::Natural::Aliases
-        DateTime::Format::Natural::Calc
-        DateTime::Format::Natural::Compat
-        DateTime::Format::Natural::Duration
-        DateTime::Format::Natural::Formatted
-        DateTime::Format::Natural::Helpers
-        DateTime::Format::Natural::Lang::Base
-        DateTime::Format::Natural::Lang::EN
-        DateTime::Format::Natural::Test
-        DateTime::Format::Natural::Utils
-        DateTime::Format::Natural::Wrappers
-    );
+    my @modules;
+    _find_modules(realpath(catfile($Bin, updir, 'lib')), \@modules, []);
+    @modules = sort @modules;
+    plan tests => scalar @modules;
     use_ok($_) foreach @modules;
 }

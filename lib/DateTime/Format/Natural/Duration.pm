@@ -3,26 +3,41 @@ package DateTime::Format::Natural::Duration;
 use strict;
 use warnings;
 
-our $VERSION = '0.04';
+use DateTime::Format::Natural::Duration::Checks;
+use List::MoreUtils qw(all);
+
+our $VERSION = '0.05';
 
 sub _pre_duration
 {
     my $self = shift;
     my ($date_strings) = @_;
 
-    my $duration = $self->{data}->{duration};
+    my $check_if = sub
+    {
+        my $sub   = shift;
+        my $class = join '::', (__PACKAGE__, 'Checks');
+        my $check = $class->can($sub) or die "$sub() not found in $class";
 
-    if ($duration->{for}->($date_strings)) {
-        $self->{insert} = $self->parse_datetime('now');
+        return $check->($self->{data}->{duration}, $date_strings, @_);
+    };
+
+    my ($present, $extract, $adjust);
+
+    if ($check_if->('for', \$present)) {
+        @{$self->{insert}}{qw(datetime trace)} = do {
+            my $dt = $self->parse_datetime($present);
+            ($dt, $self->{traces}[0]);
+        };
     }
-    elsif ($duration->{first_to_last}->($date_strings)) {
-        if (my ($complete) = $date_strings->[1] =~ /^\S+? \s+ (.*)/x) {
+    elsif ($check_if->('first_to_last', \$extract)) {
+        if (my ($complete) = $date_strings->[1] =~ $extract) {
             $date_strings->[0] .= " $complete";
         }
     }
-    elsif ($duration->{date_time_to_time}->($date_strings)) {
-        if (my ($complete) = $date_strings->[0] =~ /^(\S+?) \s+ .*/x) {
-            $date_strings->[1] = "$complete $date_strings->[1]";
+    elsif ($check_if->('from_count_to_count', \$extract, \$adjust)) {
+        if (my ($complete) = $date_strings->[0] =~ $extract) {
+            $adjust->($date_strings, $complete);
         }
     }
 }
@@ -30,10 +45,14 @@ sub _pre_duration
 sub _post_duration
 {
     my $self = shift;
-    my ($queue) = @_;
+    my ($queue, $traces) = @_;
 
-    if (exists $self->{insert}) {
-        unshift @$queue, $self->{insert};
+    my %assign = (
+        datetime => $queue,
+        trace    => $traces,
+    );
+    if (all { exists $self->{insert}{$_} } keys %assign) {
+        unshift @{$assign{$_}}, $self->{insert}{$_} foreach keys %assign;
     }
 }
 

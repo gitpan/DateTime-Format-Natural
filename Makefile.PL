@@ -11,17 +11,22 @@ WriteMakefile
           'VERSION_FROM' => 'lib/DateTime/Format/Natural.pm',
           'PREREQ_PM' => {
                            'Scalar::Util' => 0,
-                           'Getopt::Long' => 0,
                            'DateTime' => 0,
+                           'FindBin' => 0,
                            'Test::MockTime' => 0,
+                           'File::Spec' => 0,
                            'Storable' => 0,
+                           'boolean' => 0,
+                           'File::Find' => 0,
+                           'List::MoreUtils' => 0,
+                           'Getopt::Long' => 0,
                            'Exporter' => 0,
                            'Carp' => 0,
-                           'boolean' => 0,
                            'Test::More' => 0,
                            'Term::ReadLine' => 0,
                            'Params::Validate' => 0,
-                           'List::MoreUtils' => 0
+                           'Module::Util' => 0,
+                           'Cwd' => 0
                          }
         )
 ;

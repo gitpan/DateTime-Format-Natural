@@ -23,6 +23,11 @@ my $build = Module::Build->new
                  'Term::ReadLine' => 0,
                },
    build_requires => {
+                       'Cwd' => 0,
+                       'File::Find' => 0,
+                       'File::Spec' => 0,
+                       'FindBin' => 0,
+                       'Module::Util' => 0,
                        'Test::MockTime' => 0,
                        'Test::More' => 0,
                      },

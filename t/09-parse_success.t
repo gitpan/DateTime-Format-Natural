@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use DateTime::Format::Natural;
-use Test::More tests => 8;
+use Test::More tests => 10;
 
 my @ordinal_number = (
     '2d aug',
@@ -17,7 +17,13 @@ my @ordinal_number = (
     '23rd oct',
 );
 
+my @durations = (
+    '26 oct 10:00am to 11:00am',
+    '26 oct 10:00pm to 11:00pm',
+);
+
 check(\@ordinal_number);
+check(\@durations);
 
 sub check
 {
@@ -32,7 +38,7 @@ sub check_success
     my ($string) = @_;
 
     my $parser = DateTime::Format::Natural->new;
-    $parser->parse_datetime($string);
+    $parser->parse_datetime_duration($string);
 
     if ($parser->success) {
         pass($string);

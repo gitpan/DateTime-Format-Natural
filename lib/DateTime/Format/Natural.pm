@@ -18,7 +18,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '0.91';
+our $VERSION = '0.91_01';
 
 validation_options(
     on_fail => sub
@@ -264,6 +264,15 @@ sub parse_datetime_duration
       : do { $self->{duration} = false;
              ($duration_string) };
 
+    my $max = 2;
+
+    my $shrinked = false;
+    if (@date_strings > $max) {
+        my $offset = $max;
+        splice (@date_strings, $offset);
+        $shrinked = true;
+    }
+
     $self->_pre_duration(\@date_strings);
     $self->{state} = {};
 
@@ -280,13 +289,18 @@ sub parse_datetime_duration
         }
     }
 
-    $self->_post_duration(\@queue);
+    $self->_post_duration(\@queue, \@traces);
     $self->_restore_state;
 
     delete @$self{qw(duration insert state)};
 
     @{$self->{traces}} = @traces;
     $self->{input_string} = $duration_string;
+
+    if ($shrinked) {
+        $self->_set_failure;
+        $self->_set_error("(limit of $max duration substrings exceeded)");
+    }
 
     return @queue;
 }
@@ -435,7 +449,7 @@ sub _advance_future
           my $data = $_;
           any {
             my $token = $_;
-            $token =~ /$data/i;
+            $token =~ /^$data$/i;
           } @{$self->{tokens}}
         } @{$self->{data}->{$identifier}};
     };
@@ -634,7 +648,7 @@ The date string.
 
 =head2 parse_datetime_duration
 
-Returns one or more L<DateTime> objects constructed from a human readable
+Returns one or two L<DateTime> objects constructed from a human readable
 date/time string which may contain timespans/durations. I<Same> interface
 and options as C<parse_datetime()>, but should be explicitly called in
 list context.
@@ -653,7 +667,7 @@ Returns the error message if the parsing did not succeed.
 
 =head2 trace
 
-Returns one or more strings with the grammar keyword for the valid
+Returns one or two strings with the grammar keyword for the valid
 expression parsed, traces of methods which were called within the Calc
 class and a summary how often certain units have been modified. More than
 one string is commonly returned for durations. Useful as a debugging aid.
@@ -673,7 +687,7 @@ overview of currently valid input.
 
 =head1 BUGS & CAVEATS
 
-C<parse_datetime()>/C<parse_datetime_duration()> always return one or more
+C<parse_datetime()>/C<parse_datetime_duration()> always return one or two
 DateTime objects regardless whether the parse was successful or not. In
 case no valid expression was found or a failure occurred, an unaltered
 DateTime object with its initial values (most often the "current" now) is

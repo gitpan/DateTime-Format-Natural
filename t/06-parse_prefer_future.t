@@ -6,7 +6,7 @@ use boolean qw(true);
 
 use Test::MockTime qw(set_fixed_time);
 use DateTime::Format::Natural;
-use DateTime::Format::Natural::Test;
+use DateTime::Format::Natural::Test ':set';
 use Test::More;
 
 my $date = join '.', map $time{$_}, qw(day month year);

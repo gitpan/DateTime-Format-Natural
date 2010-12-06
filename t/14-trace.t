@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use DateTime::Format::Natural;
-use Test::More tests => 5;
+use Test::More tests => 6;
 
 my $parser = DateTime::Format::Natural->new;
 my $stringify = sub { local $" = "\n"; "@_\n" };
@@ -51,4 +51,16 @@ EOT
     $parser->parse_datetime_duration($string);
     @trace = $parser->trace;
     ok(!@trace, 'empty trace for parse_datetime_duration');
+}
+
+{
+    my $string = 'for 8 hours';
+    $parser->parse_datetime_duration($string);
+    is($stringify->($parser->trace), <<'EOT', $string);
+now
+DateTime::Format::Natural::Calc::_no_op
+for_count_unit
+DateTime::Format::Natural::Calc::_in_count_variant
+hour: 1
+EOT
 }

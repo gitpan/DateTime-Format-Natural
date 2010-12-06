@@ -1,5 +1,34 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.91_01  2010-12-06  <schubiger@cpan.org>
+
+ - Enhance parsing <token(s)> <count> combined relative durations; add
+   some regular tests and others for durations expected to succeed.
+
+ - Document the new supported kind of durations.
+
+ - Move the duration patterns and other metadata to the grammar
+   class and add a nested duration class with the duration checks.
+
+ - Invoke the duration checks through a function wrapper.
+
+ - Don't parse ambiguous <time>, <monthday> and <month> expressions.
+
+ - Shrink date strings in parse_datetime_duration() and fail;
+   reword documentation accordingly.
+
+ - Skip documentation tests for non-release testing.
+
+ - Test that parse_datetime_duration() shrinks and fails.
+
+ - Find module files and names for tests where necessary.
+
+ - Bundle common exportable test routines/data with a tag.
+
+ - Save the missing trace for present durations.
+
+ - Check with anchored regexp tokens in _advance_future().
+
 0.91  2010-11-01  <schubiger@cpan.org>
 
  - Merged development version to stable.
