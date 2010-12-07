@@ -5,7 +5,7 @@ use warnings;
 use boolean qw(false);
 
 use DateTime::Format::Natural;
-use Test::More tests => 308;
+use Test::More tests => 309;
 
 my %errors = (
     with_suffix      => qr/suffix 's' without plural/,
@@ -340,6 +340,7 @@ my @ordinal_number = ($errors{ordinal_number},
     '1nd tuesday last november',
     '3th jan 2000',
     'jan 3th 2000',
+    '2010 october 28st',
     '2st friday in august',
 ]);
 

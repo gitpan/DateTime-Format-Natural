@@ -10,7 +10,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.42';
+our $VERSION = '1.43';
 
 our (%init,
      %timespan,
@@ -295,7 +295,7 @@ our (%init,
          { truncate_to => 'day' },
        ],
     ],
-    dayframe => [
+    daytime => [
        [ 'REGEXP' ],
        [
          { 0 => qr/^(morning)$/i },
@@ -612,7 +612,7 @@ our (%init,
          {},
        ],
     ],
-    dayframe_day => [
+    daytime_day => [
        [ 'REGEXP', 'REGEXP' ],
        [
          { 0 => qr/^(yesterday)$/i, 1 => qr/^(morning)$/i },
@@ -757,7 +757,58 @@ our (%init,
          [ { unit => 'day' }, {} ],
          [ '_unit_variant', '_daytime_variant' ],
          {},
-       ]
+       ],
+    ],
+    weekday_daytime => [
+       [ 'REGEXP', 'REGEXP' ],
+       [
+         { 0 => $RE{weekday}, 1 => qr/^(morning)$/i },
+         [],
+         [],
+         [
+           [
+             { 0 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 1 => [ $flag{morn_aftern_even} ] },
+           ]
+         ],
+         [ {}, {} ],
+         [ '_weekday', '_daytime_variant' ],
+         { prefer_future => true },
+       ],
+       [
+         { 0 => $RE{weekday}, 1 => qr/^(afternoon)$/i },
+         [],
+         [],
+         [
+           [
+             { 0 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 1 => [ $flag{morn_aftern_even} ] },
+           ],
+         ],
+         [ {}, {} ],
+         [ '_weekday', '_daytime_variant' ],
+         { prefer_future => true },
+       ],
+       [
+         { 0 => $RE{weekday}, 1 => qr/^(evening)$/i },
+         [],
+         [],
+         [
+           [
+             { 0 => [ $flag{weekday_name}, $flag{weekday_num} ] },
+           ],
+           [
+             { 1 => [ $flag{morn_aftern_even} ] },
+           ]
+         ],
+         [ {}, {} ],
+         [ '_weekday', '_daytime_variant' ],
+         { prefer_future => true },
+       ],
     ],
     at_daytime => [
        [ 'REGEXP', 'REGEXP' ],
@@ -1776,7 +1827,25 @@ our (%init,
          [ {}, { unit => 'year' } ],
          [ '_month_day', '_unit_date' ],
          { truncate_to => 'day' },
-       ]
+       ],
+    ],
+    year_month_day => [
+       [ 'REGEXP', 'REGEXP', 'REGEXP' ],
+       [
+         { 0 => $RE{year}, 1 => $RE{month}, 2 => $RE{monthday} },
+         [ [ 2 ] ],
+         [ $extended_checks{ordinal} ],
+         [
+           [ 0 ],
+           [
+               2,
+             { 1 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+         ],
+         [ { unit => 'year' }, {} ],
+         [ '_unit_date', '_month_day' ],
+         { truncate_to => 'day' },
+       ],
     ],
     week_variant => [
        [ 'REGEXP', 'SCALAR' ],
@@ -4494,6 +4563,9 @@ that the parser does not distinguish between lower/upper case):
  tomorrow morning
  tomorrow afternoon
  tomorrow evening
+ thursday morning
+ thursday afternoon
+ thursday evening
  6:00 yesterday
  6:00 today
  6:00 tomorrow
@@ -4780,6 +4852,7 @@ that the parser does not distinguish between lower/upper case):
  february 14, 2004
  jan 3 2010
  3 jan 2000
+ 2010 october 28
  27/5/1979
  1/3
  1/3 16:00

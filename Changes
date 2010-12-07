@@ -1,5 +1,15 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.91_02  2010-12-07  <schubiger@cpan.org>
+
+ - New supported format: <weekday> <daytime>.
+   [rt #63438 - Tim Esselens]
+
+ - New supported format: <year> <month> <monthday>.
+   [rt #63429 - Rod Taylor]
+
+ - Rename the dayframe grammar keywords.
+
 0.91_01  2010-12-06  <schubiger@cpan.org>
 
  - Enhance parsing <token(s)> <count> combined relative durations; add
