@@ -11,12 +11,12 @@ use List::MoreUtils qw(any);
 use Module::Util qw(fs_path_to_module);
 use Test::More;
 
-our ($VERSION, @EXPORT_OK, %EXPORT_TAGS, %time, $case_strings);
+our ($VERSION, @EXPORT_OK, %EXPORT_TAGS, %time, $case_strings, $time_entries);
 my @set;
 
-$VERSION = '0.06';
+$VERSION = '0.07';
 
-@set         =  qw(%time $case_strings _run_tests _result_string _message);
+@set         =  qw(%time $case_strings $time_entries _run_tests _result_string _message);
 @EXPORT_OK   = (qw(_find_modules _find_files), @set);
 %EXPORT_TAGS = ('set' => [ @set ]);
 
@@ -28,6 +28,42 @@ $VERSION = '0.06';
              $_ };
 
 $case_strings = sub { ($_[0], lc $_[0], uc $_[0]) };
+$time_entries = sub
+{
+    my ($string, $result) = @_;
+
+    my @entries;
+    if ($string =~ /\{(?:min_)?sec\}/) {
+        my ($desc, @values);
+        my $sec = sprintf '%02d', int rand(60);
+        local $1;
+        if ($string =~ /\{(min_sec)\}/) {
+            @values = (
+                [ '',         '00:00'   ], # hour
+                [ ':00',      '00:00'   ], # minute
+                [ ":00:$sec", "00:$sec" ], # second
+            );
+            $desc = $1;
+        }
+        elsif ($string =~ /\{(sec)\}/) {
+            @values = (
+                [ '',      '00' ], # minute
+                [ ":$sec", $sec ], # second
+            );
+            $desc = $1;
+        }
+        foreach my $value (@values) {
+            (my $str = $string) =~ s/\{$desc\}/$value->[0]/;
+            (my $res = $result) =~ s/\{$desc\}/$value->[1]/;
+            push @entries, [ $str, $res ];
+        }
+    }
+    else {
+        @entries = ([ $string, $result ]);
+    }
+
+    return @entries;
+};
 
 sub _run_tests
 {

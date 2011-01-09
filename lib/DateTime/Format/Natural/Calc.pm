@@ -8,7 +8,7 @@ use base qw(
     DateTime::Format::Natural::Wrappers
 );
 
-our $VERSION = '1.35';
+our $VERSION = '1.36';
 
 use constant MORNING   => '08';
 use constant AFTERNOON => '14';
@@ -50,11 +50,7 @@ sub _daytime_in_the_variant
     my ($hour) = @_;
     $hour += $opts->{hours} || 0;
     if ($self->_valid_time(hour => $hour)) {
-        $self->_set(
-            hour   => $hour,
-            minute => 0,
-            second => 0,
-        );
+        $self->_set(hour => $hour);
     }
 }
 
@@ -79,11 +75,7 @@ sub _daytime_variant
       ? $self->{Daytime}{$daytime}
       : $daytimes{$daytime};
     if ($self->_valid_time(hour => $hour)) {
-        $self->_set(
-            hour   => $hour,
-            minute => 0,
-            second => 0,
-        );
+        $self->_set(hour => $hour);
     }
 }
 
@@ -94,11 +86,7 @@ sub _daytime
     my $opts = pop;
     my ($hour) = @_;
     if ($self->_valid_time(hour => $hour)) {
-        $self->_set(
-            hour   => $hour,
-            minute => 0,
-            second => 0,
-        );
+        $self->_set(hour => $hour);
     }
 }
 
@@ -110,10 +98,7 @@ sub _hourtime_variant
     my ($value, $when) = @_;
     my $hours = $opts->{hours} || 0;
     if ($self->_valid_time(hour => $hours)) {
-        $self->_set(
-            hour   => $hours,
-            minute => 0,
-        );
+        $self->_set(hour => $hours);
         $self->_add_or_subtract({
             when  => $when,
             unit  => 'hour',
@@ -308,38 +293,10 @@ sub _at_time
     my $self = shift;
     my $opts = pop;
     my ($time) = @_;
-    if ($time =~ /:/) {
-        my ($hour, $minute) = split /:/, $time;
-        if ($self->_valid_time(hour => $hour, minute => $minute)) {
-            $self->_set(
-                hour   => $hour,
-                minute => $minute,
-            );
-        }
-    }
-    else {
-        if ($self->_valid_time(hour => $time)) {
-            $self->_set(
-                hour   => $time,
-                minute => 0,
-            );
-        }
-    }
-}
-
-sub _time_full
-{
-    my $self = shift;
-    $self->_register_trace;
-    my $opts = pop;
-    my ($time) = @_;
-    my ($hour, $minute, $second) = split /:/, $time;
-    if ($self->_valid_time(hour => $hour, minute => $minute, second => $second)) {
-        $self->_set(
-            hour   => $hour,
-            minute => $minute,
-            second => $second,
-        );
+    my @units = qw(hour minute second);
+    my %values = map { shift @units => $_ } split /:/, $time;
+    if ($self->_valid_time(%values)) {
+        $self->_set(%values);
     }
 }
 

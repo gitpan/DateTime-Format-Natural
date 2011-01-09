@@ -18,7 +18,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '0.91_02';
+our $VERSION = '0.91_03';
 
 validation_options(
     on_fail => sub
@@ -426,7 +426,17 @@ sub _post_process
     my %opts = @_;
 
     if (exists $opts{truncate_to}) {
-        $self->{datetime}->truncate(to => $opts{truncate_to});
+        my @truncate_to = ref $opts{truncate_to} eq 'ARRAY' ? @{$opts{truncate_to}} : ($opts{truncate_to});
+        my $i = 0;
+        my @units = @{$self->{data}->__units('ordered')};
+        my %indexes = map { $_ => $i++ } @units;
+        foreach my $unit (@truncate_to) {
+            my $index = $indexes{$unit} - 1;
+            if (defined $units[$index] && !exists $self->{modified}{$units[$index]}) {
+                $self->{datetime}->truncate(to => $unit);
+                last;
+            }
+        }
     }
 
     if ($self->{Prefer_future} &&
@@ -456,7 +466,6 @@ sub _advance_future
 
     if ((all { /^(?:second|minute|hour)$/ } keys %modified)
         && (exists $self->{modified}{hour} && $self->{modified}{hour} == 1)
-        && (exists $self->{modified}{minute} && $self->{modified}{minute} == 1)
         && $self->{datetime}->hour < DateTime->now(time_zone => $self->{Time_zone})->hour
     ) {
         $self->{postprocess}{day} = 1;

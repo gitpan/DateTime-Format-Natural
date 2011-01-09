@@ -1,5 +1,20 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.91_03  2011-01-09  <schubiger@cpan.org>
+
+ - Allow for time regexes to match times with precision in seconds.
+
+ - Handle these times in _at_time() and adjust the according
+   post-processed truncate_to options within the grammar entries.
+
+ - Remove _time_full() and call _at_time() instead.
+
+ - Conditionally truncate to units and remove unit assignments of zero.
+
+ - When advancing to future time, omit checking for modified minute.
+
+ - Insert and process placeholders for test entries with variable units.
+
 0.91_02  2010-12-07  <schubiger@cpan.org>
 
  - New supported format: <weekday> <daytime>.
